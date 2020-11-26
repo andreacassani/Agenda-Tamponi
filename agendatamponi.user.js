@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Agenda Tamponi
 // @namespace    https://andreacassani.com/apps/agendatamponi
-// @version      0.1
+// @version      0.1.1
 // @description  Miglioramenti per prenotazione di tamponi su progetto SOLE
 // @author       Andrea Cassani
 // @icon         https://i.ibb.co/88kwYf3/icon128.png
