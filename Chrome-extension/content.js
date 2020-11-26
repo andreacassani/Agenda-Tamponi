@@ -1,7 +1,3 @@
-let isParsed = false;
-
-$('<input class="button" type="button" id="startExtension" value="Prenotazione semplificata">').click(function() { startExtension(); }).insertAfter($("[name=selezionaAppuntamentoButton]"));
-
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		//console.log(request);
@@ -10,6 +6,41 @@ chrome.runtime.onMessage.addListener(
 		}
 	}
 );
+
+let isParsed = false;
+let agende = [];
+let results = {
+    0: [],
+    6: [],
+    14: [],
+    50: [],
+    98: [],
+    99: [],
+    100: [],
+    101: []
+};
+let codiciEta = [{
+    eta: 0,
+    name: "TUTTE LE ETA"
+}, {
+    eta: 6,
+    name: "MAGGIORE 6 ANNI"
+}, {
+    eta: 14,
+    name: "MAGGIORE 14 ANNI"
+}, {
+    eta: 99,
+    name: "PEDIATRICI"
+}, {
+    eta: 50,
+    name: "SCUOLE"
+}, {
+    eta: 100,
+    name: "14-60 ANNI (AMB. BLU)"
+}, {
+    eta: 101,
+    name: "SCONOSCIUTO"
+}];
 
 function startExtension() {
 	$("#startExtension").attr("disabled", true);
@@ -34,23 +65,18 @@ function removeWarning() {
 }
 
 function addElements() {
-	let html = "<div style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'>";
+    let html = "<div style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'>";
 
-	[{ eta: 0, name: "TUTTE LE ETA" }, { eta: 6, name: "MAGGIORE 6 ANNI" }, { eta: 14, name: "MAGGIORE 14 ANNI" }, { eta: 99, name: "PEDIATRICI" }, { eta: 50, name: "SCUOLE" }, { eta: 100, name: "14-60 ANNI" }, { eta: 101, name: "SCONOSCIUTO" }].forEach(function(key) {
-		//console.log(key);
+    codiciEta.forEach(function(key) {
+        //console.log(key);
 
-		html += "<div style='margin-top: 2em; padding: 1em; border: 1px solid #7AACC5;'><div id='"+key.eta+"'><div><b>"+key.name+"</b></div><br><div id='"+key.eta+"-drive'><p><u>DRIVE</u></p></div><div id='"+key.eta+"-tamponi'><p><u><br>AMBULATORI TAMPONI</u></p></div><div id='"+key.eta+"-dsp'><p><u><br>DSP</u></p></div><div id='"+key.eta+"-blu'><p><u><br>AMBULATORI BLU</u></p></div></div></div>";
-	});
+        html += "<div style='margin-top: 2em; padding: 1em; border: 1px solid #7AACC5;'><div id='" + key.eta + "'><div><b>" + key.name + "</b></div><div id='" + key.eta + "-drive' style='margin-top: 1em;'><p><u>DRIVE</u></p></div><div id='" + key.eta + "-tamponi' style='margin-top: 1em;'><p><u>AMBULATORI TAMPONI</u></p></div><div id='" + key.eta + "-dsp' style='margin-top: 1em;'><p><u>DSP</u></p></div><div id='" + key.eta + "-blu' style='margin-top: 1em;'><p><u>AMBULATORI BLU</u></p></div></div></div>";
+    });
 
-	html += "</div>";
+    html += "</div>";
 
-	$(html).insertAfter("#" + $(".schede-covid").eq($(".schede-covid").length - 1).attr("id"));
+    $(html).insertAfter("#" + $(".schede-covid").eq($(".schede-covid").length - 1).attr("id"));
 }
-
-let agende = [];
-$("select[name=strutturaRicercaAppuntamento] option").each(function(a, b) {
-	agende.push({ num: $(b).val(), text: $(b).text() });
-});
 
 function getAppuntamenti(agenda, callback, retry) {
 	$("#warningText2").text("Invio richiesta per appuntamenti agenda " + agenda + ".");
@@ -110,66 +136,53 @@ function getAppuntamenti(agenda, callback, retry) {
 	} catch(e) { return callback(e); }
 }
 
-function anticache() {
-	return "" + new Date().getTime() + "." + Math.random();
-}
-
-function getDate() {
-	let a = new Date();
-	let b = new Date();
-	b.setDate(a.getDate() + 7);
-
-	return {
-		a: Math.round(a.getTime()),
-		b: Math.round(b.getTime())
-	}
-}
-
 function parseData(name) {
-	let cat = [name, "Drive"],
-		eta = 101;
+    let cat = [name, "Drive"],
+        eta = 101;
 
-	if (name.indexOf("BASSA") > -1) {
-		if (name.indexOf("Orsola") > -1) cat = ["Policlinico S. Orsola", "Blu"];
-		if (name.indexOf("Budrio") > -1) cat = ["Ospedale di Budrio", "Blu"];
-		if (name.indexOf("Crevalcore") > -1) cat = ["Crevalcore", "Blu"];
-		if (name.indexOf("Maggiore") > -1) cat = ["Ospedale Maggiore", "Blu"];
+    if (name.indexOf("BASSA") > -1) {
+        if (name.toLowerCase().indexOf("orsola") > -1) cat = ["Policlinico S. Orsola", "Blu"];
+        if (name.toLowerCase().indexOf("budrio") > -1) cat = ["Ospedale di Budrio", "Blu"];
+        if (name.toLowerCase().indexOf("crevalcore") > -1) cat = ["Crevalcore", "Blu"];
+        if (name.toLowerCase().indexOf("maggiore") > -1) cat = ["Ospedale Maggiore", "Blu"];
 
-		eta = 100;
-	} else {
-		if (name.indexOf("Drive San Lazzaro") > -1) cat = ["Drive San Lazzaro", "Drive"];
-		if (name.indexOf("Poliambulatorio Saragozza") > -1) cat = ["Poliambulatorio Saragozza", "Tamponi"];
-		if (name.indexOf("Crevalcore") > -1) cat = ["Crevalcore", "Tamponi"];
-		if (name.indexOf("Budrio") > -1) cat = ["Budrio", "Tamponi"];
-		if (name.indexOf("Casa della Salute Casalecchio") > -1) cat = ["Casa della Salute Casalecchio", "Tamponi"];
-		if (name.indexOf("Boldrini") > -1) cat = ["Boldrini", "DSP"];
-		if (name.indexOf("Ospedale Maggiore") > -1) cat = ["Ospedale Maggiore", "Tamponi"];
-		if (name.indexOf("DRIVE Ospedale Bentivoglio") > -1) cat = ["Drive Bentivoglio", "Drive"];
-		if (name.indexOf("PORRETTA") > -1) cat = ["Porretta", "Tamponi"];
-		if (name.indexOf("Drive Fiera") > -1) cat = ["Drive Fiera Bologna", "Drive"];
-		if (name.indexOf("UNIPOL ARENA Via Gino Cervi") > -1) cat = ["Drive Casalecchio", "Drive"];
-		if (name.indexOf("Policlinico") > -1) cat = ["Policlinico S. Orsola", "Tamponi"];
+        eta = 100;
+    } else {
+        if (name.toLowerCase().indexOf("drive fiera") > -1) cat = ["Drive Fiera Bologna", "Drive"];
+        if (name.toLowerCase().indexOf("drive san lazzaro") > -1) cat = ["Drive San Lazzaro", "Drive"];
+        if (name.toLowerCase().indexOf("drive ospedale bentivoglio") > -1) cat = ["Drive Bentivoglio", "Drive"];
+        if (name.toLowerCase().indexOf("unipol arena") > -1) cat = ["Drive Casalecchio", "Drive"];
 
-		if (name.indexOf("TUTTE") > -1 || name.indexOf("AOU") > -1) eta = 0;
-		if (name.indexOf("PEDIATRICI") > -1) eta = 99;
-		if (name.indexOf("maggiore di 6 anni") > -1 || name.indexOf("maggiore 6 anni") > -1) eta = 6;
-		if (name.indexOf("maggiore di 14 anni") > -1 || name.indexOf("maggiore 14 anni") > -1 || name.indexOf("ADULTI DRIVE") > -1) eta = 14;
-		if (name.indexOf("SCREENING SCUOLA") > -1 || name.indexOf("PERSONALE ISTITUTI SCOLASTICI") > -1) eta = 50;
-	}
+        if (name.toLowerCase().indexOf("budrio") > -1) cat = ["Budrio", "Tamponi"];
+        if (name.toLowerCase().indexOf("saragozza") > -1) cat = ["Poliambulatorio Saragozza", "Tamponi"];
+        if (name.toLowerCase().indexOf("crevalcore") > -1) cat = ["Crevalcore", "Tamponi"];
+        if (name.toLowerCase().indexOf("ospedale maggiore") > -1) cat = ["Ospedale Maggiore", "Tamponi"];
+        if (name.toLowerCase().indexOf("piazza rita levi montalcini") > -1) cat = ["Casa della Salute Casalecchio", "Tamponi"];
+        if (name.toLowerCase().indexOf("porretta") > -1) cat = ["Porretta", "Tamponi"];
+        if (name.toLowerCase().indexOf("orsola") > -1) cat = ["Policlinico S. Orsola", "Tamponi"];
 
-	//console.log(name, [cat, eta]);
-	return { cat, eta };
+        if (name.toLowerCase().indexOf("boldrini") > -1) cat = ["Boldrini", "DSP"];
+
+
+
+
+        if (name.toLowerCase().indexOf("tutte") > -1 || name.toLowerCase().indexOf("aou") > -1) eta = 0;
+        
+        if (name.toLowerCase().indexOf("pediatrici") > -1) eta = 99;
+        if (name.toLowerCase().indexOf("6-14 anni") > -1) cat[0] += " (6-14 anni)";
+
+        if (name.toLowerCase().indexOf("maggiore di 6 anni") > -1 || name.toLowerCase().indexOf("maggiore 6 anni") > -1) eta = 6;
+        if (name.toLowerCase().indexOf("maggiore di 14 anni") > -1 || name.toLowerCase().indexOf("maggiore 14 anni") > -1 || name.toLowerCase().indexOf("adulti drive") > -1) eta = 14;
+        if (name.toLowerCase().indexOf("screening scuola") > -1 || name.toLowerCase().indexOf("personale istituti scolastici") > -1) eta = 50;
+    }
+
+    if (eta === 101) console.log(name, [cat, eta]);
+    
+    return {
+        cat,
+        eta
+    };
 }
-
-let results = {
-	0: [],
-	6: [],
-	14: [],
-	50: [],
-	99: [],
-	100: [],
-	101: []
-};
 
 function startParsing() {
 	//console.log(agende);
@@ -197,6 +210,43 @@ function startParsing() {
 	});
 }
 
+function cleanAgende() {
+    codiciEta.forEach(function(key) {
+        //console.log(key);
+
+        if ($("#" + key.eta + "-drive").children().length === 1) {
+            $("#" + key.eta + "-drive").remove();
+        };
+        if ($("#" + key.eta + "-tamponi").children().length === 1) {
+            $("#" + key.eta + "-tamponi").remove();
+        };
+        if ($("#" + key.eta + "-dsp").children().length === 1) {
+            $("#" + key.eta + "-dsp").remove();
+        };
+        if ($("#" + key.eta + "-blu").children().length === 1) {
+            $("#" + key.eta + "-blu").remove();
+        };
+        if ($("#" + key.eta).children().length === 1) {
+            $("#" + key.eta).parent().remove();
+        };
+    });
+}
+
+function anticache() {
+	return "" + new Date().getTime() + "." + Math.random();
+}
+
+function getDate() {
+	let a = new Date();
+	let b = new Date();
+	b.setDate(a.getDate() + 7);
+
+	return {
+		a: Math.round(a.getTime()),
+		b: Math.round(b.getTime())
+	}
+}
+
 $(document).ajaxStop(function() {
 	//console.log("Tutte le agende completate");
 	//console.log(results);
@@ -216,24 +266,8 @@ $(document).ajaxStop(function() {
 	cleanAgende();
 });
 
-function cleanAgende() {
-	[{ eta: 0, name: "TUTTE LE ETA" }, { eta: 6, name: "MAGGIORE 6 ANNI" }, { eta: 14, name: "MAGGIORE 14 ANNI" }, { eta: 99, name: "PEDIATRICI" }, { eta: 50, name: "SCUOLE" }, { eta: 100, name: "14-60 ANNI" }, { eta: 101, name: "14-60 ANNI" }].forEach(function(key) {
-		//console.log(key);
+$('<input class="button" type="button" id="startExtension" value="Prenotazione semplificata">').click(function() { startExtension(); }).insertAfter($("[name=selezionaAppuntamentoButton]"));
 
-		if ($("#" + key.eta + "-drive").children().length === 1) {
-			$("#" + key.eta + "-drive").remove();
-		};
-		if ($("#" + key.eta + "-tamponi").children().length === 1) {
-			$("#" + key.eta + "-tamponi").remove();
-		};
-		if ($("#" + key.eta + "-dsp").children().length === 1) {
-			$("#" + key.eta + "-dsp").remove();
-		};
-		if ($("#" + key.eta + "-blu").children().length === 1) {
-			$("#" + key.eta + "-blu").remove();
-		};
-		if ($("#" + key.eta).children().length === 2) {
-			$("#" + key.eta).parent().remove();
-		};
-	});
-}
+$("select[name=strutturaRicercaAppuntamento] option").each(function(a, b) {
+	agende.push({ num: $(b).val(), text: $(b).text() });
+});

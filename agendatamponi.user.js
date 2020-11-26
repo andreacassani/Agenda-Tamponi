@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Agenda Tamponi
 // @namespace    https://andreacassani.com/apps/agendatamponi
-// @version      0.1.2
+// @version      0.2.1
 // @description  Miglioramenti per prenotazione di tamponi su progetto SOLE
 // @author       Andrea Cassani
 // @icon         https://i.ibb.co/88kwYf3/icon128.png
@@ -24,10 +24,33 @@
             6: [],
             14: [],
             50: [],
+            98: [],
             99: [],
             100: [],
             101: []
         };
+        let codiciEta = [{
+            eta: 0,
+            name: "TUTTE LE ETA"
+        }, {
+            eta: 6,
+            name: "MAGGIORE 6 ANNI"
+        }, {
+            eta: 14,
+            name: "MAGGIORE 14 ANNI"
+        }, {
+            eta: 99,
+            name: "PEDIATRICI"
+        }, {
+            eta: 50,
+            name: "SCUOLE"
+        }, {
+            eta: 100,
+            name: "14-60 ANNI (AMB. BLU)"
+        }, {
+            eta: 101,
+            name: "SCONOSCIUTO"
+        }];
 
 
 
@@ -56,31 +79,10 @@
         function addElements() {
             let html = "<div style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'>";
 
-            [{
-                eta: 0,
-                name: "TUTTE LE ETA"
-            }, {
-                eta: 6,
-                name: "MAGGIORE 6 ANNI"
-            }, {
-                eta: 14,
-                name: "MAGGIORE 14 ANNI"
-            }, {
-                eta: 99,
-                name: "PEDIATRICI"
-            }, {
-                eta: 50,
-                name: "SCUOLE"
-            }, {
-                eta: 100,
-                name: "14-60 ANNI"
-            }, {
-                eta: 101,
-                name: "SCONOSCIUTO"
-            }].forEach(function(key) {
+            codiciEta.forEach(function(key) {
                 //console.log(key);
 
-                html += "<div style='margin-top: 2em; padding: 1em; border: 1px solid #7AACC5;'><div id='" + key.eta + "'><div><b>" + key.name + "</b></div><br><div id='" + key.eta + "-drive'><p><u>DRIVE</u></p></div><div id='" + key.eta + "-tamponi'><p><u><br>AMBULATORI TAMPONI</u></p></div><div id='" + key.eta + "-dsp'><p><u><br>DSP</u></p></div><div id='" + key.eta + "-blu'><p><u><br>AMBULATORI BLU</u></p></div></div></div>";
+                html += "<div style='margin-top: 2em; padding: 1em; border: 1px solid #7AACC5;'><div id='" + key.eta + "'><div><b>" + key.name + "</b></div><div id='" + key.eta + "-drive' style='margin-top: 1em;'><p><u>DRIVE</u></p></div><div id='" + key.eta + "-tamponi' style='margin-top: 1em;'><p><u>AMBULATORI TAMPONI</u></p></div><div id='" + key.eta + "-dsp' style='margin-top: 1em;'><p><u>DSP</u></p></div><div id='" + key.eta + "-blu' style='margin-top: 1em;'><p><u>AMBULATORI BLU</u></p></div></div></div>";
             });
 
             html += "</div>";
@@ -157,34 +159,43 @@
                 eta = 101;
 
             if (name.indexOf("BASSA") > -1) {
-                if (name.indexOf("Orsola") > -1) cat = ["Policlinico S. Orsola", "Blu"];
-                if (name.indexOf("Budrio") > -1) cat = ["Ospedale di Budrio", "Blu"];
-                if (name.indexOf("Crevalcore") > -1) cat = ["Crevalcore", "Blu"];
-                if (name.indexOf("Maggiore") > -1) cat = ["Ospedale Maggiore", "Blu"];
+                if (name.toLowerCase().indexOf("orsola") > -1) cat = ["Policlinico S. Orsola", "Blu"];
+                if (name.toLowerCase().indexOf("budrio") > -1) cat = ["Ospedale di Budrio", "Blu"];
+                if (name.toLowerCase().indexOf("crevalcore") > -1) cat = ["Crevalcore", "Blu"];
+                if (name.toLowerCase().indexOf("maggiore") > -1) cat = ["Ospedale Maggiore", "Blu"];
 
                 eta = 100;
             } else {
-                if (name.indexOf("Drive San Lazzaro") > -1) cat = ["Drive San Lazzaro", "Drive"];
-                if (name.indexOf("Poliambulatorio Saragozza") > -1) cat = ["Poliambulatorio Saragozza", "Tamponi"];
-                if (name.indexOf("Crevalcore") > -1) cat = ["Crevalcore", "Tamponi"];
-                if (name.indexOf("Budrio") > -1) cat = ["Budrio", "Tamponi"];
-                if (name.indexOf("Casa della Salute Casalecchio") > -1) cat = ["Casa della Salute Casalecchio", "Tamponi"];
-                if (name.indexOf("Boldrini") > -1) cat = ["Boldrini", "DSP"];
-                if (name.indexOf("Ospedale Maggiore") > -1) cat = ["Ospedale Maggiore", "Tamponi"];
-                if (name.indexOf("DRIVE Ospedale Bentivoglio") > -1) cat = ["Drive Bentivoglio", "Drive"];
-                if (name.indexOf("PORRETTA") > -1) cat = ["Porretta", "Tamponi"];
-                if (name.indexOf("Drive Fiera") > -1) cat = ["Drive Fiera Bologna", "Drive"];
-                if (name.indexOf("UNIPOL ARENA Via Gino Cervi") > -1) cat = ["Drive Casalecchio", "Drive"];
-                if (name.indexOf("Policlinico") > -1) cat = ["Policlinico S. Orsola", "Tamponi"];
+                if (name.toLowerCase().indexOf("drive fiera") > -1) cat = ["Drive Fiera Bologna", "Drive"];
+                if (name.toLowerCase().indexOf("drive san lazzaro") > -1) cat = ["Drive San Lazzaro", "Drive"];
+                if (name.toLowerCase().indexOf("drive ospedale bentivoglio") > -1) cat = ["Drive Bentivoglio", "Drive"];
+                if (name.toLowerCase().indexOf("unipol arena") > -1) cat = ["Drive Casalecchio", "Drive"];
 
-                if (name.indexOf("TUTTE") > -1 || name.indexOf("AOU") > -1) eta = 0;
-                if (name.indexOf("PEDIATRICI") > -1) eta = 99;
-                if (name.indexOf("maggiore di 6 anni") > -1 || name.indexOf("maggiore 6 anni") > -1) eta = 6;
-                if (name.indexOf("maggiore di 14 anni") > -1 || name.indexOf("maggiore 14 anni") > -1 || name.indexOf("ADULTI DRIVE") > -1) eta = 14;
-                if (name.indexOf("SCREENING SCUOLA") > -1 || name.indexOf("PERSONALE ISTITUTI SCOLASTICI") > -1) eta = 50;
+                if (name.toLowerCase().indexOf("budrio") > -1) cat = ["Budrio", "Tamponi"];
+                if (name.toLowerCase().indexOf("saragozza") > -1) cat = ["Poliambulatorio Saragozza", "Tamponi"];
+                if (name.toLowerCase().indexOf("crevalcore") > -1) cat = ["Crevalcore", "Tamponi"];
+                if (name.toLowerCase().indexOf("ospedale maggiore") > -1) cat = ["Ospedale Maggiore", "Tamponi"];
+                if (name.toLowerCase().indexOf("piazza rita levi montalcini") > -1) cat = ["Casa della Salute Casalecchio", "Tamponi"];
+                if (name.toLowerCase().indexOf("porretta") > -1) cat = ["Porretta", "Tamponi"];
+                if (name.toLowerCase().indexOf("orsola") > -1) cat = ["Policlinico S. Orsola", "Tamponi"];
+
+                if (name.toLowerCase().indexOf("boldrini") > -1) cat = ["Boldrini", "DSP"];
+
+
+
+
+                if (name.toLowerCase().indexOf("tutte") > -1 || name.toLowerCase().indexOf("aou") > -1) eta = 0;
+                
+                if (name.toLowerCase().indexOf("pediatrici") > -1) eta = 99;
+                if (name.toLowerCase().indexOf("6-14 anni") > -1) cat[0] += " (6-14 anni)";
+
+                if (name.toLowerCase().indexOf("maggiore di 6 anni") > -1 || name.toLowerCase().indexOf("maggiore 6 anni") > -1) eta = 6;
+                if (name.toLowerCase().indexOf("maggiore di 14 anni") > -1 || name.toLowerCase().indexOf("maggiore 14 anni") > -1 || name.toLowerCase().indexOf("adulti drive") > -1) eta = 14;
+                if (name.toLowerCase().indexOf("screening scuola") > -1 || name.toLowerCase().indexOf("personale istituti scolastici") > -1) eta = 50;
             }
 
-            //console.log(name, [cat, eta]);
+            if (eta === 101) console.log(name, [cat, eta]);
+            
             return {
                 cat,
                 eta
@@ -218,28 +229,7 @@
         }
 
         function cleanAgende() {
-            [{
-                eta: 0,
-                name: "TUTTE LE ETA"
-            }, {
-                eta: 6,
-                name: "MAGGIORE 6 ANNI"
-            }, {
-                eta: 14,
-                name: "MAGGIORE 14 ANNI"
-            }, {
-                eta: 99,
-                name: "PEDIATRICI"
-            }, {
-                eta: 50,
-                name: "SCUOLE"
-            }, {
-                eta: 100,
-                name: "14-60 ANNI"
-            }, {
-                eta: 101,
-                name: "14-60 ANNI"
-            }].forEach(function(key) {
+            codiciEta.forEach(function(key) {
                 //console.log(key);
 
                 if ($("#" + key.eta + "-drive").children().length === 1) {
@@ -254,7 +244,7 @@
                 if ($("#" + key.eta + "-blu").children().length === 1) {
                     $("#" + key.eta + "-blu").remove();
                 };
-                if ($("#" + key.eta).children().length === 2) {
+                if ($("#" + key.eta).children().length === 1) {
                     $("#" + key.eta).parent().remove();
                 };
             });
