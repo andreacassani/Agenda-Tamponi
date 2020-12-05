@@ -280,7 +280,7 @@
     }
 
     function agendaTamponiMenu() {
-      const isAuth = sessionStorage.getItem('isAuth') || false;
+      const isAuth = sessionStorage.getItem('isAuth');
       const profiloUtente = $('#identita_id').val();
 
       function createDivMenu() {
