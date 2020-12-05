@@ -62,8 +62,10 @@ function loadExtension() {
 
   chrome.runtime.sendMessage({ message: 'is_first_load', profiloUtente }, (response) => {
     if (response.message) {
+      createTempDivMenu();
       createiFrame();
     } else {
+      createTempDivMenu();
       createDivMenu();
     }
   });

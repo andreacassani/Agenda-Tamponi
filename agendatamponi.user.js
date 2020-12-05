@@ -281,6 +281,7 @@
 
     function agendaTamponiMenu() {
       const isAuth = sessionStorage.getItem('isAuth') || false;
+      const profiloUtente = $('#identita_id').val();
 
       function createDivMenu() {
         const covidHtml = `
@@ -334,12 +335,12 @@
 
       function createiFrame() {
         $('<iframe src="/servizi/index.php"></iframe>').insertAfter('body').hide().on('load', () => {
-          sessionStorage.setItem('isAuth', 'true');
+          sessionStorage.setItem('isAuth', profiloUtente);
           createDivMenu();
         });
       }
 
-      if (isAuth) {
+      if (isAuth === profiloUtente) {
         createTempDivMenu();
         createDivMenu();
       } else {
