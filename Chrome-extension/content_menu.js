@@ -1,30 +1,7 @@
-let profiloUtente = $("#identita_id").val();
-loadExtension();
-
-
-function loadExtension() {
-	createTempDivMenu();
-
-	chrome.runtime.sendMessage({ message: "is_first_load", profiloUtente: profiloUtente }, function(response) {
-		//console.log("is_first_load", response.message);
-		if (response.message) {
-			createiFrame();
-		} else {
-			createDivMenu();
-		}
-	});
-}
-
-
-function createiFrame() {
-	$('<iframe src="/servizi/index.php"></iframe>').insertAfter("body").hide().on("load", function() {
-		chrome.runtime.sendMessage({ message: "done_loading", profiloUtente: profiloUtente });
-		createDivMenu();
-	});
-}
+const profiloUtente = $('#identita_id').val();
 
 function createDivMenu() {
-	let covidHtml = `
+  const covidHtml = `
 		<li class="menu_expanded">
 			<a href="" class="menuToggle"><span>Gestione malattia (funziona solo su identità principale)</span></a>
 			<ul class="">
@@ -49,13 +26,13 @@ function createDivMenu() {
 					<a href="https://ws.bolognaausl.progetto-sole.it/soleweb/login?wicket:bookmarkablePage=:it.cup2000.soleweb.covid19.page.PianoLavoroCalendarPage" title="Piano di Lavoro"><span>Piano di Lavoro</span></a>
 				</li>
 			</ul>
-		</li>`
+		</li>`;
 
-	$("#top_cvd19").html(covidHtml);
+  $('#top_cvd19').html(covidHtml);
 }
 
 function createTempDivMenu() {
-	let covidHtml = `
+  const covidHtml = `
 		<div class="box-sx-bottom">&nbsp;</div>
 		<div class="box-sx cvd19">
 			<div>
@@ -68,7 +45,28 @@ function createTempDivMenu() {
 					<p>Caricamento in corso...</p>
 				</ul>
 			</div>
-		</div>`
+		</div>`;
 
-	$(".box-sx.prf").after(covidHtml);
+  $('.box-sx.prf').after(covidHtml);
 }
+
+function createiFrame() {
+  $('<iframe src="/servizi/index.php"></iframe>').insertAfter('body').hide().on('load', () => {
+    chrome.runtime.sendMessage({ message: 'done_loading', profiloUtente });
+    createDivMenu();
+  });
+}
+
+function loadExtension() {
+  createTempDivMenu();
+
+  chrome.runtime.sendMessage({ message: 'is_first_load', profiloUtente }, (response) => {
+    if (response.message) {
+      createiFrame();
+    } else {
+      createDivMenu();
+    }
+  });
+}
+
+loadExtension();

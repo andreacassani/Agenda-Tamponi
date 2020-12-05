@@ -1,18 +1,15 @@
-let profiloUtente = undefined;
+let profiloUtente;
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	//console.log(sender.tab ? "from a content script:" + sender.tab.url : "from the extension");
-	//console.log("runtime", request.message);
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.message === 'is_first_load') {
+    if (request.profiloUtente === profiloUtente) {
+      sendResponse({ message: false });
+    } else {
+      sendResponse({ message: true });
+    }
+  }
 
-	if (request.message === "is_first_load") {
-		if (request.profiloUtente === profiloUtente) {
-			sendResponse({ message: false });
-		} else {
-			sendResponse({ message: true });
-		}
-	};
-
-	if (request.message === "done_loading") {
-		profiloUtente = request.profiloUtente;
-	};
+  if (request.message === 'done_loading') {
+    profiloUtente = request.profiloUtente;
+  }
 });
