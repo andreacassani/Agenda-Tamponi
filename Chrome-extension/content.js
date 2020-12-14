@@ -144,6 +144,7 @@ function parseData(name) {
     if (name.toLowerCase().indexOf('unipol arena') > -1) cat = ['Drive Casalecchio', 'Drive'];
 
     if (name.toLowerCase().indexOf('budrio') > -1) cat = ['Budrio', 'Tamponi'];
+    if (name.toLowerCase().indexOf('san pietro in casale') > -1) cat = ['San Pietro in Casale', 'Tamponi'];
     if (name.toLowerCase().indexOf('saragozza') > -1) cat = ['Poliambulatorio Saragozza', 'Tamponi'];
     if (name.toLowerCase().indexOf('crevalcore') > -1) cat = ['Crevalcore', 'Tamponi'];
     if (name.toLowerCase().indexOf('ospedale maggiore') > -1) cat = ['Ospedale Maggiore', 'Tamponi'];

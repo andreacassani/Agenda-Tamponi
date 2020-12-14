@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Agenda Tamponi
 // @namespace    https://andreacassani.com/apps/agendatamponi
-// @version      0.3.4
+// @version      0.3.5
 // @description  Miglioramenti per prenotazione di tamponi su progetto SOLE
 // @author       Andrea Cassani
 // @icon         https://i.ibb.co/88kwYf3/icon128.png
@@ -166,6 +166,7 @@
           if (name.toLowerCase().indexOf('unipol arena') > -1) cat = ['Drive Casalecchio', 'Drive'];
 
           if (name.toLowerCase().indexOf('budrio') > -1) cat = ['Budrio', 'Tamponi'];
+          if (name.toLowerCase().indexOf('san pietro in casale') > -1) cat = ['San Pietro in Casale', 'Tamponi'];
           if (name.toLowerCase().indexOf('saragozza') > -1) cat = ['Poliambulatorio Saragozza', 'Tamponi'];
           if (name.toLowerCase().indexOf('crevalcore') > -1) cat = ['Crevalcore', 'Tamponi'];
           if (name.toLowerCase().indexOf('ospedale maggiore') > -1) cat = ['Ospedale Maggiore', 'Tamponi'];
