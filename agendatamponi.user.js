@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Agenda Tamponi
 // @namespace    https://andreacassani.com/apps/agenda-tamponi
-// @version      0.3.6
+// @version      0.3.7
 // @description  Miglioramenti per prenotazione di tamponi su progetto SOLE
 // @author       Andrea Cassani
 // @icon         https://i.ibb.co/88kwYf3/icon128.png
@@ -93,7 +93,7 @@
         try {
           const interfaces = document.documentElement.innerHTML.match(/\?wicket:interface=:(\d+):(?:nuovaSchedaPanel:)?schedaPanel:formAppuntamento:(\d*):IFormSubmitListener::/);
           const appuntamentoButton = document.documentElement.innerHTML.match(/name="selezionaAppuntamentoButton".+?value="(.+?)"/);
-          const formId = document.documentElement.innerHTML.match(/formAppuntamento.+input type="hidden" name="(.+?)"/);
+          const formId = document.documentElement.innerHTML.match(/formAppuntamento.+input.+name="(.+?)"/);
 
           const formData = {
             [formId[1]]: '',
@@ -173,6 +173,7 @@
           if (name.toLowerCase().indexOf('piazza rita levi montalcini') > -1) cat = ['Casa della Salute Casalecchio', 'Tamponi'];
           if (name.toLowerCase().indexOf('porretta') > -1) cat = ['Porretta', 'Tamponi'];
           if (name.toLowerCase().indexOf('orsola') > -1) cat = ['Policlinico S. Orsola', 'Tamponi'];
+          if (name.toLowerCase().indexOf('rizzoli') > -1) cat = ['Istituto Ortopedico Rizzoli', 'Tamponi'];
 
           if (name.toLowerCase().indexOf('boldrini') > -1) cat = ['Boldrini', 'DSP'];
 
