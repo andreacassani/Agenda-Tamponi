@@ -1,9 +1,9 @@
-const profiloUtente = $('#identita_id').val();
+const profiloUtente = $("#identita_id").val();
 
 function createDivMenu() {
   const covidHtml = `
 		<li class="menu_expanded">
-			<a href="" class="menuToggle"><span>Gestione malattia (funziona solo su identità principale)</span></a>
+		<a href="" class="menuToggle"><span>Gestione malattia (funziona solo se si ha accesso a servizi COVID)</span></a>
 			<ul class="">
 				<li class="">
 					<a href="https://ws.bolognaausl.progetto-sole.it/soleweb/login?wicket:bookmarkablePage=:it.cup2000.soleweb.covid19.page.NuovaSchedaCovidPage" title="Nuova scheda"><span>Nuova denuncia malattia</span></a>
@@ -18,17 +18,9 @@ function createDivMenu() {
 					<a href="https://ws.bolognaausl.progetto-sole.it/soleweb/login?wicket:bookmarkablePage=:it.cup2000.soleweb.covid19.page.guarigione.CercaSchedaGuarigionePage" title="Elenco schede Guarigione"><span>Elenco schede guarigione</span></a>
 				</li>
 			</ul>
-		</li>
-		<li class="menu_expanded">
-			<a href="" class="menuToggle"><span>Consulta agende (funziona solo su identità agenda)</span></a>
-			<ul class="">
-				<li class="">
-					<a href="https://ws.bolognaausl.progetto-sole.it/soleweb/login?wicket:bookmarkablePage=:it.cup2000.soleweb.covid19.page.PianoLavoroCalendarPage" title="Piano di Lavoro"><span>Piano di Lavoro</span></a>
-				</li>
-			</ul>
 		</li>`;
 
-  $('#top_cvd19').html(covidHtml);
+  $("#top_cvd19").html(covidHtml);
 }
 
 function createTempDivMenu() {
@@ -47,28 +39,17 @@ function createTempDivMenu() {
 			</div>
 		</div>`;
 
-  $('.box-sx.prf').after(covidHtml);
+  $(".box-sx.prf").after(covidHtml);
 }
 
 function createiFrame() {
-  $('<iframe src="/servizi/index.php"></iframe>').insertAfter('body').hide().on('load', () => {
-    chrome.runtime.sendMessage({ message: 'done_loading', profiloUtente });
-    createDivMenu();
-  });
-}
-
-function loadExtension() {
-  createTempDivMenu();
-
-  chrome.runtime.sendMessage({ message: 'is_first_load', profiloUtente }, (response) => {
-    if (response.message) {
-      createTempDivMenu();
-      createiFrame();
-    } else {
-      createTempDivMenu();
+  $('<iframe src="/servizi/index.php"></iframe>')
+    .insertAfter("body")
+    .hide()
+    .on("load", () => {
       createDivMenu();
-    }
-  });
+    });
 }
 
-loadExtension();
+createTempDivMenu();
+createiFrame();

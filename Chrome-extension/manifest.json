@@ -1,31 +1,29 @@
 {
-	"manifest_version": 2,
-	"name": "Agenda Tamponi",
-	"version": "0.3.7",
-	"description": "Miglioramenti per prenotazione di tamponi su progetto SOLE",
-	"author": "Andrea Cassani",
-	"homepage_url": "https://andreacassani.com/apps/agenda-tamponi",
-	"icons": {
-		"16": "icons/icon16.png",
-		"48": "icons/icon48.png",
-		"128": "icons/icon128.png"
-	},
-	"background": {
-		"scripts": ["background.js"],
-		"persistent": false
-	},
-	"content_scripts": [
-		{
-			"matches": [
-				"https://ws.bolognaausl.progetto-sole.it/soleweb/?wicket:interface*"
-			],
-			"js": ["jquery-3.5.1.js", "content.js"]
-		},
-		{
-			"matches": [
-				"https://www.progetto-sole.it/riservata*"
-			],
-			"js": ["jquery-3.5.1.js", "content_menu.js"]
-		}
-	]
+  "manifest_version": 2,
+  "name": "Agenda Tamponi",
+  "version": "0.3.8",
+  "description": "Miglioramenti per prenotazione di tamponi su progetto SOLE",
+  "author": "Andrea Cassani",
+  "homepage_url": "https://andreacassani.com/apps/agenda-tamponi",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://ws.bolognaausl.progetto-sole.it/soleweb/?wicket:interface*"
+      ],
+      "js": ["jquery-3.5.1.js", "content.js"]
+    },
+    {
+      "matches": ["https://www.progetto-sole.it/riservata*"],
+      "js": ["jquery-3.5.1.js", "content_menu.js"]
+    }
+  ]
 }
