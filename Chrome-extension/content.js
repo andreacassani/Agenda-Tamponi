@@ -9,10 +9,11 @@ const results = {
   99: [],
   100: [],
   101: [],
+  999: [],
 };
 const codiciEta = [
-  {
-    eta: 0,
+{
+  eta: 0,
     name: "TUTTE LE ETA",
   },
   {
@@ -24,12 +25,12 @@ const codiciEta = [
     name: "MAGGIORE 14 ANNI",
   },
   {
-    eta: 99,
-    name: "PEDIATRICI",
-  },
-  {
     eta: 50,
     name: "SCUOLE",
+  },
+  {
+    eta: 99,
+    name: "PEDIATRICI",
   },
   {
     eta: 100,
@@ -37,6 +38,10 @@ const codiciEta = [
   },
   {
     eta: 101,
+    name: "MONOCLONALI",
+  },
+  {
+    eta: 999,
     name: "SCONOSCIUTO",
   },
 ];
@@ -76,7 +81,7 @@ function addElements() {
     "<div style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'>";
 
   codiciEta.forEach((key) => {
-    html += `<div style='margin-top: 2em; padding: 1em; border: 1px solid #7AACC5;'><div id='${key.eta}'><div><b>${key.name}</b></div><div id='${key.eta}-drive' style='margin-top: 1em;'><p><u>DRIVE</u></p></div><div id='${key.eta}-tamponi' style='margin-top: 1em;'><p><u>AMBULATORI TAMPONI</u></p></div><div id='${key.eta}-dsp' style='margin-top: 1em;'><p><u>DSP</u></p></div><div id='${key.eta}-blu' style='margin-top: 1em;'><p><u>AMBULATORI BLU</u></p></div></div></div>`;
+    html += `<div style='margin-top: 2em; padding: 1em; border: 1px solid ${key.eta === 101 ? '#4b371e; background-color: #f0dcc7' : '#7AACC5'};'><div id='${key.eta}'><div><b>${key.name}</b></div><div id='${key.eta}-drive' style='margin-top: 1em;'><p><u>DRIVE</u></p></div><div id='${key.eta}-tamponi' style='margin-top: 1em;'><p><u>AMBULATORI TAMPONI</u></p></div><div id='${key.eta}-dsp' style='margin-top: 1em;'><p><u>DSP</u></p></div><div id='${key.eta}-blu' style='margin-top: 1em;'><p><u>AMBULATORI BLU</u></p></div></div></div>`;
   });
 
   html += "</div>";
@@ -164,7 +169,7 @@ function getAppuntamenti(agenda, callback, retry) {
 
 function parseData(name) {
   let cat = [name, "Drive"];
-  let eta = 101;
+  let eta = 999;
 
   if (name.indexOf("COVID VISITA") > -1) {
     if (name.toLowerCase().indexOf("orsola") > -1)
@@ -173,10 +178,22 @@ function parseData(name) {
       cat = ["Ospedale di Budrio", "Blu"];
     if (name.toLowerCase().indexOf("crevalcore") > -1)
       cat = ["Crevalcore", "Blu"];
-    if (name.toLowerCase().indexOf("maggiore") > -1)
+    if (name.toLowerCase().indexOf("ospedale maggiore") > -1)
       cat = ["Ospedale Maggiore", "Blu"];
 
     eta = 100;
+  } else if (name.indexOf("COVID MONOCLONALI") > -1) {
+    if (name.toLowerCase().indexOf("aosp") > -1)
+      cat = ["Policlinico S. Orsola", "Blu"];
+    if (name.toLowerCase().indexOf("ospedale maggiore") > -1)
+      cat = ["Ospedale Maggiore", "Blu"];
+
+    if (name.toLowerCase().indexOf("12-17") > -1)
+      cat[0] += " (12-17 anni)";
+    if (name.toLowerCase().indexOf(">=18") > -1)
+      cat[0] += " (>= 18 anni)";
+
+    eta = 101;
   } else {
     if (name.toLowerCase().indexOf("drive fiera") > -1)
       cat = ["Drive Fiera Bologna", "Drive"];
@@ -187,7 +204,8 @@ function parseData(name) {
     if (name.toLowerCase().indexOf("unipol arena") > -1)
       cat = ["Drive Casalecchio", "Drive"];
 
-    if (name.toLowerCase().indexOf("budrio") > -1) cat = ["Budrio", "Tamponi"];
+    if (name.toLowerCase().indexOf("budrio") > -1)
+      cat = ["Budrio", "Tamponi"];
     if (name.toLowerCase().indexOf("san pietro in casale") > -1)
       cat = ["San Pietro in Casale", "Tamponi"];
     if (name.toLowerCase().indexOf("saragozza") > -1)
@@ -216,7 +234,8 @@ function parseData(name) {
       eta = 0;
 
     if (name.toLowerCase().indexOf("pediatrici") > -1) eta = 99;
-    if (name.toLowerCase().indexOf("6-14 anni") > -1) cat[0] += " (6-14 anni)";
+    if (name.toLowerCase().indexOf("6-14 anni") > -1)
+      cat[0] += " (6-14 anni)";
 
     if (
       name.toLowerCase().indexOf("maggiore di 6 anni") > -1 ||
@@ -236,7 +255,9 @@ function parseData(name) {
       eta = 50;
   }
 
-  if (eta === 101) console.log(name, [cat, eta]);
+  if (eta === 999) {
+    console.log(name, [cat, eta]);
+  }
 
   return {
     cat,

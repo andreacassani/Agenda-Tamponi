@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Agenda Tamponi
 // @namespace    https://andreacassani.com/apps/agenda-tamponi
-// @version      0.3.8
+// @version      0.4.1
 // @description  Miglioramenti per prenotazione di tamponi su progetto SOLE
 // @author       Andrea Cassani
 // @icon         https://i.ibb.co/88kwYf3/icon128.png
@@ -27,6 +27,7 @@
         99: [],
         100: [],
         101: [],
+        999: [],
       };
       const codiciEta = [
         {
@@ -42,12 +43,12 @@
           name: "MAGGIORE 14 ANNI",
         },
         {
-          eta: 99,
-          name: "PEDIATRICI",
-        },
-        {
           eta: 50,
           name: "SCUOLE",
+        },
+        {
+          eta: 99,
+          name: "PEDIATRICI",
         },
         {
           eta: 100,
@@ -55,6 +56,10 @@
         },
         {
           eta: 101,
+          name: "MONOCLONALI",
+        },
+        {
+          eta: 999,
           name: "SCONOSCIUTO",
         },
       ];
@@ -94,7 +99,7 @@
           "<div style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'>";
 
         codiciEta.forEach((key) => {
-          html += `<div style='margin-top: 2em; padding: 1em; border: 1px solid #7AACC5;'><div id='${key.eta}'><div><b>${key.name}</b></div><div id='${key.eta}-drive' style='margin-top: 1em;'><p><u>DRIVE</u></p></div><div id='${key.eta}-tamponi' style='margin-top: 1em;'><p><u>AMBULATORI TAMPONI</u></p></div><div id='${key.eta}-dsp' style='margin-top: 1em;'><p><u>DSP</u></p></div><div id='${key.eta}-blu' style='margin-top: 1em;'><p><u>AMBULATORI BLU</u></p></div></div></div>`;
+          html += `<div style='margin-top: 2em; padding: 1em; border: 1px solid ${key.eta === 101 ? '#4b371e; background-color: #f0dcc7' : '#7AACC5'};'><div id='${key.eta}'><div><b>${key.name}</b></div><div id='${key.eta}-drive' style='margin-top: 1em;'><p><u>DRIVE</u></p></div><div id='${key.eta}-tamponi' style='margin-top: 1em;'><p><u>AMBULATORI TAMPONI</u></p></div><div id='${key.eta}-dsp' style='margin-top: 1em;'><p><u>DSP</u></p></div><div id='${key.eta}-blu' style='margin-top: 1em;'><p><u>AMBULATORI BLU</u></p></div></div></div>`;
         });
 
         html += "</div>";
@@ -188,7 +193,7 @@
 
       function parseData(name) {
         let cat = [name, "Drive"];
-        let eta = 101;
+        let eta = 999;
 
         if (name.indexOf("COVID VISITA") > -1) {
           if (name.toLowerCase().indexOf("orsola") > -1)
@@ -197,10 +202,22 @@
             cat = ["Ospedale di Budrio", "Blu"];
           if (name.toLowerCase().indexOf("crevalcore") > -1)
             cat = ["Crevalcore", "Blu"];
-          if (name.toLowerCase().indexOf("maggiore") > -1)
+          if (name.toLowerCase().indexOf("ospedale maggiore") > -1)
             cat = ["Ospedale Maggiore", "Blu"];
 
           eta = 100;
+        } else if (name.indexOf("COVID MONOCLONALI") > -1) {
+          if (name.toLowerCase().indexOf("aosp") > -1)
+            cat = ["Policlinico S. Orsola", "Blu"];
+          if (name.toLowerCase().indexOf("ospedale maggiore") > -1)
+            cat = ["Ospedale Maggiore", "Blu"];
+
+          if (name.toLowerCase().indexOf("12-17") > -1)
+            cat[0] += " (12-17 anni)";
+          if (name.toLowerCase().indexOf(">=18") > -1)
+            cat[0] += " (>= 18 anni)";
+
+          eta = 101;
         } else {
           if (name.toLowerCase().indexOf("drive fiera") > -1)
             cat = ["Drive Fiera Bologna", "Drive"];
@@ -262,7 +279,7 @@
             eta = 50;
         }
 
-        if (eta === 101) {
+        if (eta === 999) {
           console.log(name, [cat, eta]);
         }
 
