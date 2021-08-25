@@ -12,8 +12,8 @@ const results = {
   999: [],
 };
 const codiciEta = [
-{
-  eta: 0,
+  {
+    eta: 0,
     name: "TUTTE LE ETA",
   },
   {
@@ -81,7 +81,17 @@ function addElements() {
     "<div style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'>";
 
   codiciEta.forEach((key) => {
-    html += `<div style='margin-top: 2em; padding: 1em; border: 1px solid ${key.eta === 101 ? '#4b371e; background-color: #f0dcc7' : '#7AACC5'};'><div id='${key.eta}'><div><b>${key.name}</b></div><div id='${key.eta}-drive' style='margin-top: 1em;'><p><u>DRIVE</u></p></div><div id='${key.eta}-tamponi' style='margin-top: 1em;'><p><u>AMBULATORI TAMPONI</u></p></div><div id='${key.eta}-dsp' style='margin-top: 1em;'><p><u>DSP</u></p></div><div id='${key.eta}-blu' style='margin-top: 1em;'><p><u>AMBULATORI BLU</u></p></div></div></div>`;
+    html += `<div style='margin-top: 2em; padding: 1em; border: 1px solid ${
+      key.eta === 101 ? "#4b371e; background-color: #f0dcc7" : "#7AACC5"
+    };'><div id='${key.eta}'><div><b>${key.name}</b></div><div id='${
+      key.eta
+    }-drive' style='margin-top: 1em;'><p><u>DRIVE</u></p></div><div id='${
+      key.eta
+    }-tamponi' style='margin-top: 1em;'><p><u>AMBULATORI TAMPONI</u></p></div><div id='${
+      key.eta
+    }-dsp' style='margin-top: 1em;'><p><u>DSP</u></p></div><div id='${
+      key.eta
+    }-blu' style='margin-top: 1em;'><p><u>AMBULATORI BLU</u></p></div></div></div>`;
   });
 
   html += "</div>";
@@ -188,10 +198,8 @@ function parseData(name) {
     if (name.toLowerCase().indexOf("ospedale maggiore") > -1)
       cat = ["Ospedale Maggiore", "Blu"];
 
-    if (name.toLowerCase().indexOf("12-17") > -1)
-      cat[0] += " (12-17 anni)";
-    if (name.toLowerCase().indexOf(">=18") > -1)
-      cat[0] += " (>= 18 anni)";
+    if (name.toLowerCase().indexOf("12-17") > -1) cat[0] += " (12-17 anni)";
+    if (name.toLowerCase().indexOf(">=18") > -1) cat[0] += " (>= 18 anni)";
 
     eta = 101;
   } else {
@@ -203,9 +211,15 @@ function parseData(name) {
       cat = ["Drive Bentivoglio", "Drive"];
     if (name.toLowerCase().indexOf("unipol arena") > -1)
       cat = ["Drive Casalecchio", "Drive"];
+    if (
+      name.toLowerCase().indexOf("drive pronto soccorso ospedale di bazzano") >
+      -1
+    )
+      cat = ["Drive Bazzano", "Drive"];
+    if (name.toLowerCase().indexOf("drive pala yuri") > -1)
+      cat = ["Drive San Lazzaro", "Drive"];
 
-    if (name.toLowerCase().indexOf("budrio") > -1)
-      cat = ["Budrio", "Tamponi"];
+    if (name.toLowerCase().indexOf("budrio") > -1) cat = ["Budrio", "Tamponi"];
     if (name.toLowerCase().indexOf("san pietro in casale") > -1)
       cat = ["San Pietro in Casale", "Tamponi"];
     if (name.toLowerCase().indexOf("saragozza") > -1)
@@ -234,8 +248,7 @@ function parseData(name) {
       eta = 0;
 
     if (name.toLowerCase().indexOf("pediatrici") > -1) eta = 99;
-    if (name.toLowerCase().indexOf("6-14 anni") > -1)
-      cat[0] += " (6-14 anni)";
+    if (name.toLowerCase().indexOf("6-14 anni") > -1) cat[0] += " (6-14 anni)";
 
     if (
       name.toLowerCase().indexOf("maggiore di 6 anni") > -1 ||

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Agenda Tamponi
 // @namespace    https://andreacassani.com/apps/agenda-tamponi
-// @version      0.4.1
+// @version      0.4.2
 // @description  Miglioramenti per prenotazione di tamponi su progetto SOLE
 // @author       Andrea Cassani
 // @icon         https://i.ibb.co/88kwYf3/icon128.png
@@ -99,7 +99,17 @@
           "<div style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'>";
 
         codiciEta.forEach((key) => {
-          html += `<div style='margin-top: 2em; padding: 1em; border: 1px solid ${key.eta === 101 ? '#4b371e; background-color: #f0dcc7' : '#7AACC5'};'><div id='${key.eta}'><div><b>${key.name}</b></div><div id='${key.eta}-drive' style='margin-top: 1em;'><p><u>DRIVE</u></p></div><div id='${key.eta}-tamponi' style='margin-top: 1em;'><p><u>AMBULATORI TAMPONI</u></p></div><div id='${key.eta}-dsp' style='margin-top: 1em;'><p><u>DSP</u></p></div><div id='${key.eta}-blu' style='margin-top: 1em;'><p><u>AMBULATORI BLU</u></p></div></div></div>`;
+          html += `<div style='margin-top: 2em; padding: 1em; border: 1px solid ${
+            key.eta === 101 ? "#4b371e; background-color: #f0dcc7" : "#7AACC5"
+          };'><div id='${key.eta}'><div><b>${key.name}</b></div><div id='${
+            key.eta
+          }-drive' style='margin-top: 1em;'><p><u>DRIVE</u></p></div><div id='${
+            key.eta
+          }-tamponi' style='margin-top: 1em;'><p><u>AMBULATORI TAMPONI</u></p></div><div id='${
+            key.eta
+          }-dsp' style='margin-top: 1em;'><p><u>DSP</u></p></div><div id='${
+            key.eta
+          }-blu' style='margin-top: 1em;'><p><u>AMBULATORI BLU</u></p></div></div></div>`;
         });
 
         html += "</div>";
@@ -227,6 +237,14 @@
             cat = ["Drive Bentivoglio", "Drive"];
           if (name.toLowerCase().indexOf("unipol arena") > -1)
             cat = ["Drive Casalecchio", "Drive"];
+          if (
+            name
+              .toLowerCase()
+              .indexOf("drive pronto soccorso ospedale di bazzano") > -1
+          )
+            cat = ["Drive Bazzano", "Drive"];
+          if (name.toLowerCase().indexOf("drive pala yuri") > -1)
+            cat = ["Drive San Lazzaro", "Drive"];
 
           if (name.toLowerCase().indexOf("budrio") > -1)
             cat = ["Budrio", "Tamponi"];
