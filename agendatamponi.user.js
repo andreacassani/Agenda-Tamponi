@@ -233,6 +233,8 @@
             cat = ["Drive Fiera Bologna", "Drive"];
           if (name.toLowerCase().indexOf("drive san lazzaro") > -1)
             cat = ["Drive San Lazzaro", "Drive"];
+          if (name.toLowerCase().indexOf("drive san camillo") > -1)
+            cat = ["Drive San Lazzaro", "Drive"];
           if (name.toLowerCase().indexOf("drive ospedale bentivoglio") > -1)
             cat = ["Drive Bentivoglio", "Drive"];
           if (name.toLowerCase().indexOf("unipol arena") > -1)
