@@ -247,6 +247,10 @@
             cat = ["Drive Bazzano", "Drive"];
           if (name.toLowerCase().indexOf("drive pala yuri") > -1)
             cat = ["Drive San Lazzaro", "Drive"];
+          if (name.toLowerCase().indexOf("drive via toscana") > -1)
+            cat = ["Drive Zola Predosa", "Drive"];
+          if (name.toLowerCase().indexOf("drive cds ozzano") > -1)
+            cat = ["Drive Ozzano", "Drive"];
 
           if (name.toLowerCase().indexOf("budrio") > -1)
             cat = ["Budrio", "Tamponi"];
@@ -270,6 +274,8 @@
             cat = ["Boldrini", "Tamponi"];
           if (name.toLowerCase().indexOf("pieve di cento") > -1)
             cat = ["Pieve di Cento", "Tamponi"];
+          if (name.toLowerCase().indexOf("vado tamponi") > -1)
+            cat = ["Vado", "Tamponi"];
 
           if (
             name.toLowerCase().indexOf("tutte") > -1 ||
