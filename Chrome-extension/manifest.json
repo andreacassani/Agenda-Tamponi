@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Agenda Tamponi",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Miglioramenti per prenotazione di tamponi su progetto SOLE",
   "author": "Andrea Cassani",
   "homepage_url": "https://andreacassani.com/apps/agenda-tamponi",
