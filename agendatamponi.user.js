@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Agenda Tamponi
 // @namespace    https://andreacassani.com/apps/agenda-tamponi
-// @version      0.4.4
+// @version      0.4.5
 // @description  Miglioramenti per prenotazione di tamponi su progetto SOLE
 // @author       Andrea Cassani
 // @icon         https://i.ibb.co/88kwYf3/icon128.png
@@ -251,6 +251,8 @@
             cat = ["Drive Zola Predosa", "Drive"];
           if (name.toLowerCase().indexOf("drive cds ozzano") > -1)
             cat = ["Drive Ozzano", "Drive"];
+          if (name.toLowerCase().indexOf("drive parco nord") > -1)
+            cat = ["Drive Parco Nord", "Drive"];
 
           if (name.toLowerCase().indexOf("budrio") > -1)
             cat = ["Budrio", "Tamponi"];
@@ -276,6 +278,8 @@
             cat = ["Pieve di Cento", "Tamponi"];
           if (name.toLowerCase().indexOf("vado tamponi") > -1)
             cat = ["Vado", "Tamponi"];
+          if (name.toLowerCase().indexOf("ospedale bellaria pad tinozzi") > -1)
+            cat = ["Ospedale Bellaria", "Tamponi"];
 
           if (
             name.toLowerCase().indexOf("tutte") > -1 ||

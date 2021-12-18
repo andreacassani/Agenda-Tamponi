@@ -224,6 +224,8 @@ function parseData(name) {
       cat = ["Drive Zola Predosa", "Drive"];
     if (name.toLowerCase().indexOf("drive cds ozzano") > -1)
       cat = ["Drive Ozzano", "Drive"];
+    if (name.toLowerCase().indexOf("drive parco nord") > -1)
+      cat = ["Drive Parco Nord", "Drive"];
 
     if (name.toLowerCase().indexOf("budrio") > -1) cat = ["Budrio", "Tamponi"];
     if (name.toLowerCase().indexOf("san pietro in casale") > -1)
@@ -248,6 +250,8 @@ function parseData(name) {
       cat = ["Pieve di Cento", "Tamponi"];
     if (name.toLowerCase().indexOf("vado tamponi") > -1)
       cat = ["Vado", "Tamponi"];
+    if (name.toLowerCase().indexOf("ospedale bellaria pad tinozzi") > -1)
+      cat = ["Ospedale Bellaria", "Tamponi"];
 
     if (
       name.toLowerCase().indexOf("tutte") > -1 ||
