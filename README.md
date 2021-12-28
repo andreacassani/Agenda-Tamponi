@@ -18,7 +18,7 @@ Puoi trovare la documentazione su come installare, utilizzare e disinstallare Ag
 Agenda-Tamponi è sotto licenza [GNU General Public License v3.0](https://github.com/andreacassani/Agenda-Tamponi/blob/main/LICENSE).
 
 ## Responsabilità
-Ricordo che l'utilizzo di Agenda-Tamponi e delle relative estensioni di gestione di script, al di fuori dell'installazione e dell'utilizzo sui propri dispositivi personali, __deve essere autorizzata dall'ente proprietario del dispositivo in uso__, e che il sottoscritto, in qualità di autore di Agenda-Tamponi, non risponde in alcun modo di danni o conseguenze che possono essere causate dall'utilizzo errato di Agenda-Tamponi, delle relative estensioni o da una loro manomissione al di fuori del controllo del sottoscritto.
+Ricordo che l'utilizzo di Agenda-Tamponi e delle relative estensioni di gestione di script, al di fuori dell'installazione e dell'utilizzo sui propri dispositivi personali, __deve essere autorizzata dall'ente proprietario del dispositivo in uso__.
 
 ## Contribuire
 
