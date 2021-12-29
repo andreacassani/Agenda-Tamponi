@@ -67,7 +67,8 @@
       }
 
       function getAppuntamenti(agenda, callback, retry = 0) {
-        const { numero, nome } = agenda;
+        const numero = agenda.numero;
+        const nome = agenda.nome;
 
         if ($(`#status-agenda-${numero}`).length === 0) {
           $("#warningText2").append(
@@ -176,8 +177,8 @@
                         return callback(null, { agenda });
                       }
 
-                      const { descrizioneStruttura } =
-                        json[indexPrimoSlot].slot;
+                      const descrizioneStruttura =
+                        json[indexPrimoSlot].slot.descrizioneStruttura;
                       const dataErogazione = json[indexPrimoSlot].start;
                       const primoAppuntamento = `${new Date(
                         dataErogazione
@@ -410,7 +411,7 @@
         $(warningHtml).insertAfter(`#warningLoading`);
 
         AGENDE.forEach(function (agenda, index) {
-          const { numero } = agenda;
+          const numero = agenda.numero;
 
           if (!numero) {
             return console.log(agenda);
