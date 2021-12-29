@@ -16,53 +16,26 @@
 (function ($, undefined) {
   (function () {
     function prenotazioneTamponi() {
-      let isParsed = false;
-      const agende = [];
-      const results = {
-        0: [],
-        6: [],
-        14: [],
-        50: [],
-        98: [],
-        99: [],
-        100: [],
-        101: [],
-        999: [],
-      };
-      const codiciEta = [
-        {
-          eta: 0,
-          name: "TUTTE LE ETA",
-        },
-        {
-          eta: 6,
-          name: "MAGGIORE 6 ANNI",
-        },
-        {
-          eta: 14,
-          name: "MAGGIORE 14 ANNI",
-        },
-        {
-          eta: 50,
-          name: "SCUOLE",
-        },
-        {
-          eta: 99,
-          name: "PEDIATRICI",
-        },
-        {
-          eta: 100,
-          name: "40-69 ANNI (AMB. BLU)",
-        },
-        {
-          eta: 101,
-          name: "MONOCLONALI",
-        },
-        {
-          eta: 999,
-          name: "SCONOSCIUTO",
-        },
+      let IS_PARSED = false;
+      
+      const AGENDE = [];
+      const BATCH_TIME = 75;
+      const CODICI_ETA = [
+        "SCONOSCIUTO",
+        "TUTTE LE ETA",
+        "MAGGIORE 6 ANNI",
+        "MAGGIORE 14 ANNI",
+        "SCUOLE",
+        "PEDIATRICI",
+        "40-69 ANNI (AMB. BLU)",
+        "MONOCLONALI",
       ];
+      const TIPI = {
+        Sconosciuto: "Sconosciuto",
+        Blu: "Ambulatorio Blu",
+        Drive: "Drive Tamponi",
+        Tamponi: "Ambulatorio Tamponi",
+      };
 
       function anticache() {
         return `${new Date().getTime()}.${Math.random()}`;
@@ -74,71 +47,50 @@
         b.setDate(a.getDate() + 7);
 
         return {
-          a: Math.round(a.getTime()),
-          b: Math.round(b.getTime()),
+          start: Math.round(a.getTime()),
+          end: Math.round(b.getTime()),
         };
       }
 
-      function addWarning() {
-        const html =
-          "<div id='warningLoading' style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'><div style='padding: 1em; border: 1px solid #7AACC5;'><div><div><b>ATTENZIONE!!</b></div><br><div><p><u>CARICAMENTO DELLE AGENDE IN CORSO...<br>Se entro 15 secondi non compaiono le agende qualcosa non ha funzionato!!</u></p><div><p id='warningText1'></p><p id='warningText2'></p><p id='warningText3'></p></div></div></div></div></div>";
+      function sortList(selector, child) {
+        const parent = $(selector);
 
-        $(html).insertAfter(
-          `#${$(".schede-covid")
-            .eq($(".schede-covid").length - 1)
-            .attr("id")}`
-        );
+        parent
+          .find(child)
+          .sort(function (a, b) {
+            var upA = $(a).text().toUpperCase();
+            var upB = $(b).text().toUpperCase();
+
+            return upA < upB ? -1 : upA > upB ? 1 : 0;
+          })
+          .appendTo(selector);
       }
 
-      function removeWarning() {
-        $("#warningLoading").remove();
-      }
+      function getAppuntamenti(agenda, callback, retry = 0) {
+        const { numero, nome } = agenda;
 
-      function addElements() {
-        let html =
-          "<div style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'>";
+        if ($(`#status-agenda-${numero}`).length === 0) {
+          $("#warningText2").append(
+            `<p id="status-agenda-${numero}">[...] Agenda ${nome}</p>`
+          );
+        }
 
-        codiciEta.forEach((key) => {
-          html += `<div style='margin-top: 2em; padding: 1em; border: 1px solid ${
-            key.eta === 101 ? "#4b371e; background-color: #f0dcc7" : "#7AACC5"
-          };'><div id='${key.eta}'><div><b>${key.name}</b></div><div id='${
-            key.eta
-          }-drive' style='margin-top: 1em;'><p><u>DRIVE</u></p></div><div id='${
-            key.eta
-          }-tamponi' style='margin-top: 1em;'><p><u>AMBULATORI TAMPONI</u></p></div><div id='${
-            key.eta
-          }-dsp' style='margin-top: 1em;'><p><u>DSP</u></p></div><div id='${
-            key.eta
-          }-blu' style='margin-top: 1em;'><p><u>AMBULATORI BLU</u></p></div></div></div>`;
-        });
-
-        html += "</div>";
-
-        $(html).insertAfter(
-          `#${$(".schede-covid")
-            .eq($(".schede-covid").length - 1)
-            .attr("id")}`
-        );
-      }
-
-      function getAppuntamenti(agenda, callback, retry) {
-        $("#warningText2").text(
-          `Invio richiesta per appuntamenti agenda ${agenda}.`
-        );
         try {
           const interfaces = document.documentElement.innerHTML.match(
             /\?wicket:interface=:(\d+):(?:nuovaSchedaPanel:)?schedaPanel:formAppuntamento:(\d*):IFormSubmitListener::/
           );
+
           const appuntamentoButton = document.documentElement.innerHTML.match(
             /name="selezionaAppuntamentoButton".+?value="(.+?)"/
           );
+
           const formId = document.documentElement.innerHTML.match(
             /formAppuntamento.+input.+name="(.+?)"/
           );
 
           const formData = {
             [formId[1]]: "",
-            strutturaRicercaAppuntamento: agenda,
+            strutturaRicercaAppuntamento: numero,
             selezionaAppuntamentoButton: appuntamentoButton[1],
           };
 
@@ -150,20 +102,31 @@
             }:schedaPanel:formAppuntamento:${
               interfaces[2]
             }:IFormSubmitListener::`,
-            method: "POST",
+            method: "post",
             data: formData,
-            timeout: 15e3,
-            success(data) {
-              if (data.match(/login\/wicket:interface/)) {
-                if (retry && retry > 2) {
-                  return callback("Login error");
+            timeout: 30000,
+            error: function (_, status) {
+              if (status === "timeout") {
+                if (retry > 2) {
+                  callback("timeout", { agenda });
+                } else {
+                  getAppuntamenti(agenda, callback, ++retry);
                 }
-                const retryReturn = retry ? retry + 1 : 1;
-                return getAppuntamenti(agenda, callback, retryReturn);
+              } else {
+                callback(status, { agenda });
+              }
+            },
+            success: function (html) {
+              if (html.match(/login\/wicket:interface/)) {
+                if (retry > 2) {
+                  callback("login_error", { agenda });
+                } else {
+                  getAppuntamenti(agenda, callback, ++retry);
+                }
               }
 
-              if (data.match(/prenotazioneCalendar::IBehaviorListener/)) {
-                const url = data.match(
+              if (html.match(/prenotazioneCalendar::IBehaviorListener/)) {
+                const url = html.match(
                   /url: '\?wicket:interface=:(\d+):prenotazioneCalendar::IBehaviorListener:0:&sid=(.+?)',/
                 );
                 const wInterface = url[1];
@@ -171,146 +134,263 @@
 
                 $.ajax({
                   url: `/soleweb/?wicket:interface=:${wInterface}:prenotazioneCalendar::IBehaviorListener:0:&sid=${sid}&start=${
-                    getDate().a
+                    getDate().start
                   }&end=${
-                    getDate().b
+                    getDate().end
                   }&timezoneOffset=-60&anticache=${anticache()}`,
-                  method: "GET",
+                  method: "get",
                   dataType: "json",
-                  timeout: 15e3,
-                  success(dataAgenda) {
-                    if (dataAgenda[0] && dataAgenda[0].slot) {
-                      const { descrizioneStruttura } = dataAgenda[0].slot;
-                      const dataErogazione = dataAgenda[0].start;
-                      return callback(null, {
+                  timeout: 30000,
+                  error: function (_, status) {
+                    if (status === "timeout") {
+                      if (retry > 2) {
+                        callback("timeout", { agenda });
+                      } else {
+                        getAppuntamenti(agenda, callback, ++retry);
+                      }
+                    } else {
+                      callback(status, { agenda });
+                    }
+                  },
+                  success: function (json) {
+                    if (json[0] && json[0].slot) {
+                      let slotHaTempoInRange = false;
+                      let indexPrimoSlot = 0;
+
+                      for (let i = 0; i < json.length; i++) {
+                        const testDataErogazione = json[i].start;
+                        const testOraAppuntamento = new Date(
+                          testDataErogazione
+                        ).getHours();
+
+                        if (testOraAppuntamento < 8) {
+                          continue;
+                        } else {
+                          slotHaTempoInRange = true;
+                          indexPrimoSlot = i;
+                          break;
+                        }
+                      }
+
+                      if (!slotHaTempoInRange) {
+                        return callback(null, { agenda });
+                      }
+
+                      const { descrizioneStruttura } =
+                        json[indexPrimoSlot].slot;
+                      const dataErogazione = json[indexPrimoSlot].start;
+                      const primoAppuntamento = `${new Date(
+                        dataErogazione
+                      ).getHours()}:${String(
+                        new Date(dataErogazione).getMinutes()
+                      ).padStart(2, "0")}`;
+
+                      callback(null, {
                         descrizioneStruttura,
                         dataErogazione,
+                        primoAppuntamento,
                         agenda,
                       });
+                    } else {
+                      callback(null, { agenda });
                     }
-                    return callback(null, false);
                   },
                 });
+              } else {
+                callback("nomatch", { agenda });
               }
-              return false;
             },
           });
-        } catch (e) {
-          return callback(e);
+        } catch (error) {
+          callback(error, { agenda });
         }
-        return false;
       }
 
       function parseData(name) {
-        let cat = [name, "Drive"];
-        let eta = 999;
+        const cleanName = name
+          .toLowerCase()
+          .trim()
+          .replace(/\s\s+/g, " ")
+          .replace(/\s/g, " ");
 
-        if (name.indexOf("COVID VISITA") > -1) {
-          if (name.toLowerCase().indexOf("orsola") > -1)
+        let cat = [cleanName, "Sconosciuto"];
+        let eta = 0;
+
+        if (cleanName.indexOf("covid visita") > -1) {
+          if (cleanName.indexOf("orsola") > -1) {
             cat = ["Policlinico S. Orsola", "Blu"];
-          if (name.toLowerCase().indexOf("budrio") > -1)
+          }
+
+          if (cleanName.indexOf("budrio") > -1) {
             cat = ["Ospedale di Budrio", "Blu"];
-          if (name.toLowerCase().indexOf("crevalcore") > -1)
+          }
+
+          if (cleanName.indexOf("crevalcore") > -1) {
             cat = ["Crevalcore", "Blu"];
-          if (name.toLowerCase().indexOf("ospedale maggiore") > -1)
-            cat = ["Ospedale Maggiore", "Blu"];
+          }
 
-          eta = 100;
-        } else if (name.indexOf("COVID MONOCLONALI") > -1) {
-          if (name.toLowerCase().indexOf("aosp") > -1)
+          if (cleanName.indexOf("ospedale maggiore") > -1) {
+            cat = ["Ospedale Maggiore", "Blu"];
+          }
+
+          eta = 6;
+        } else if (cleanName.indexOf("covid monoclonali") > -1) {
+          if (cleanName.indexOf("aosp") > -1) {
             cat = ["Policlinico S. Orsola", "Blu"];
-          if (name.toLowerCase().indexOf("ospedale maggiore") > -1)
+          }
+
+          if (cleanName.indexOf("ospedale maggiore") > -1) {
             cat = ["Ospedale Maggiore", "Blu"];
+          }
 
-          if (name.toLowerCase().indexOf("12-17") > -1)
+          if (cleanName.indexOf("12-17") > -1) {
             cat[0] += " (12-17 anni)";
-          if (name.toLowerCase().indexOf(">=18") > -1)
+          }
+
+          if (cleanName.indexOf(">=18") > -1) {
             cat[0] += " (>= 18 anni)";
+          }
 
-          eta = 101;
+          eta = 7;
         } else {
-          if (name.toLowerCase().indexOf("drive fiera") > -1)
+          if (cleanName.indexOf("drive fiera") > -1) {
             cat = ["Drive Fiera Bologna", "Drive"];
-          if (name.toLowerCase().indexOf("drive san lazzaro") > -1)
+          }
+
+          if (cleanName.indexOf("drive san lazzaro") > -1) {
             cat = ["Drive San Lazzaro", "Drive"];
-          if (name.toLowerCase().indexOf("drive san camillo") > -1)
+          }
+
+          if (cleanName.indexOf("drive san camillo") > -1) {
             cat = ["Drive San Lazzaro", "Drive"];
-          if (name.toLowerCase().indexOf("drive ospedale bentivoglio") > -1)
+          }
+
+          if (cleanName.indexOf("drive ospedale bentivoglio") > -1) {
             cat = ["Drive Bentivoglio", "Drive"];
-          if (name.toLowerCase().indexOf("unipol arena") > -1)
+          }
+
+          if (cleanName.indexOf("unipol arena") > -1) {
             cat = ["Drive Casalecchio", "Drive"];
+          }
+
           if (
-            name
-              .toLowerCase()
-              .indexOf("drive pronto soccorso ospedale di bazzano") > -1
-          )
+            cleanName.indexOf("drive pronto soccorso ospedale di bazzano") > -1
+          ) {
             cat = ["Drive Bazzano", "Drive"];
-          if (name.toLowerCase().indexOf("drive pala yuri") > -1)
+          }
+
+          if (cleanName.indexOf("drive pala yuri") > -1) {
             cat = ["Drive San Lazzaro", "Drive"];
-          if (name.toLowerCase().indexOf("drive via toscana") > -1)
+          }
+
+          if (cleanName.indexOf("drive via toscana") > -1) {
             cat = ["Drive Zola Predosa", "Drive"];
-          if (name.toLowerCase().indexOf("drive cds ozzano") > -1)
+          }
+
+          if (cleanName.indexOf("drive cds ozzano") > -1) {
             cat = ["Drive Ozzano", "Drive"];
-          if (name.toLowerCase().indexOf("drive parco nord") > -1)
+          }
+
+          if (cleanName.indexOf("drive parco nord") > -1) {
             cat = ["Drive Parco Nord", "Drive"];
+          }
 
-          if (name.toLowerCase().indexOf("budrio") > -1)
+          if (cleanName.indexOf("budrio") > -1) {
             cat = ["Budrio", "Tamponi"];
-          if (name.toLowerCase().indexOf("san pietro in casale") > -1)
+          }
+
+          if (cleanName.indexOf("san pietro in casale") > -1) {
             cat = ["San Pietro in Casale", "Tamponi"];
-          if (name.toLowerCase().indexOf("saragozza") > -1)
+          }
+
+          if (cleanName.indexOf("saragozza") > -1) {
             cat = ["Poliambulatorio Saragozza", "Tamponi"];
-          if (name.toLowerCase().indexOf("crevalcore") > -1)
+          }
+
+          if (cleanName.indexOf("crevalcore") > -1) {
             cat = ["Crevalcore", "Tamponi"];
-          if (name.toLowerCase().indexOf("ospedale maggiore") > -1)
+          }
+
+          if (cleanName.indexOf("ospedale maggiore") > -1) {
             cat = ["Ospedale Maggiore", "Tamponi"];
-          if (name.toLowerCase().indexOf("piazza rita levi montalcini") > -1)
+          }
+
+          if (cleanName.indexOf("piazza rita levi montalcini") > -1) {
             cat = ["Casa della Salute Casalecchio", "Tamponi"];
-          if (name.toLowerCase().indexOf("porretta") > -1)
+          }
+
+          if (cleanName.indexOf("porretta") > -1) {
             cat = ["Porretta", "Tamponi"];
-          if (name.toLowerCase().indexOf("orsola") > -1)
+          }
+
+          if (cleanName.indexOf("orsola") > -1) {
             cat = ["Policlinico S. Orsola", "Tamponi"];
-          if (name.toLowerCase().indexOf("rizzoli") > -1)
+          }
+
+          if (cleanName.indexOf("rizzoli") > -1) {
             cat = ["Istituto Ortopedico Rizzoli", "Tamponi"];
-          if (name.toLowerCase().indexOf("boldrini") > -1)
+          }
+
+          if (cleanName.indexOf("boldrini") > -1) {
             cat = ["Boldrini", "Tamponi"];
-          if (name.toLowerCase().indexOf("pieve di cento") > -1)
+          }
+
+          if (cleanName.indexOf("pieve di cento") > -1) {
             cat = ["Pieve di Cento", "Tamponi"];
-          if (name.toLowerCase().indexOf("vado tamponi") > -1)
+          }
+
+          if (cleanName.indexOf("vado tamponi") > -1) {
             cat = ["Vado", "Tamponi"];
-          if (name.toLowerCase().indexOf("ospedale bellaria pad tinozzi") > -1)
+          }
+
+          if (cleanName.indexOf("ospedale bellaria pad tinozzi") > -1) {
             cat = ["Ospedale Bellaria", "Tamponi"];
+          }
+
+          if (cleanName.indexOf("baricella tamponi") > -1) {
+            cat = ["Baricella", "Tamponi"];
+          }
 
           if (
-            name.toLowerCase().indexOf("tutte") > -1 ||
-            name.toLowerCase().indexOf("aou") > -1
-          )
-            eta = 0;
+            cleanName.indexOf("tutte") > -1 ||
+            cleanName.indexOf("aou") > -1
+          ) {
+            eta = 1;
+          }
 
-          if (name.toLowerCase().indexOf("pediatrici") > -1) eta = 99;
-          if (name.toLowerCase().indexOf("6-14 anni") > -1)
+          if (cleanName.indexOf("pediatrici") > -1) {
+            eta = 5;
+          }
+
+          if (cleanName.indexOf("6-14 anni") > -1) {
             cat[0] += " (6-14 anni)";
+          }
 
           if (
-            name.toLowerCase().indexOf("maggiore di 6 anni") > -1 ||
-            name.toLowerCase().indexOf("maggiore 6 anni") > -1
-          )
-            eta = 6;
+            cleanName.indexOf("maggiore di 6 anni") > -1 ||
+            cleanName.indexOf("maggiore 6 anni") > -1
+          ) {
+            eta = 2;
+          }
+
           if (
-            name.toLowerCase().indexOf("maggiore di 14 anni") > -1 ||
-            name.toLowerCase().indexOf("maggiore 14 anni") > -1 ||
-            name.toLowerCase().indexOf("adulti drive") > -1
-          )
-            eta = 14;
+            cleanName.indexOf("maggiore di 14 anni") > -1 ||
+            cleanName.indexOf("maggiore 14 anni") > -1 ||
+            cleanName.indexOf("adulti drive") > -1
+          ) {
+            eta = 3;
+          }
+
           if (
-            name.toLowerCase().indexOf("screening scuola") > -1 ||
-            name.toLowerCase().indexOf("personale istituti scolastici") > -1
-          )
-            eta = 50;
+            cleanName.indexOf("screening scuola") > -1 ||
+            cleanName.indexOf("personale istituti scolastici") > -1
+          ) {
+            eta = 4;
+          }
         }
 
-        if (eta === 999) {
-          console.log(name, [cat, eta]);
+        if (eta === 0) {
+          console.log(cleanName, [cat, eta]);
         }
 
         return {
@@ -320,103 +400,134 @@
       }
 
       function startParsing() {
-        $("#warningText1").text(
-          `Raccolgo informazioni sulle agende. Ho trovato ${agende.length} agende.`
+        $("#warningText1").html(
+          `Ho trovato ${AGENDE.length} agende. Clicca su <i>Dettagli</i> per vedere il progresso.<br>Mano a mano che le agende vengono caricate saranno mostrate in calce alla pagina.`
         );
-        agende.forEach((agenda) => {
-          if (!agenda.num) return;
 
-          getAppuntamenti(agenda.num, (err, data) => {
-            $("#warningText2").text(
-              `Appuntamenti per l'agenda ${agenda.num} ricevuti.`
-            );
-            if (err) return console.log(err);
-            if (data) {
-              const parsed = parseData(data.descrizioneStruttura);
-              return results[parsed.eta].push({
-                eta: parsed.eta,
-                sede: parsed.cat[0],
-                tipo: parsed.cat[1],
-                agenda: data.agenda,
-                dataErogazione: data.dataErogazione,
-                nomeCompleto: data.descrizioneStruttura,
-              });
-            }
-            return false;
-          });
+        const warningHtml =
+          "<div style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;' id='agende-covid'></div>";
+
+        $(warningHtml).insertAfter(`#warningLoading`);
+
+        AGENDE.forEach(function (agenda, index) {
+          const { numero } = agenda;
+
+          if (!numero) {
+            return console.log(agenda);
+          }
+
+          setTimeout(function () {
+            getAppuntamenti(agenda, function (error, data) {
+              const color = error ? "993123" : data ? "379923" : "997a23";
+              const status = error ? "errore" : data ? "ok" : "vuota";
+
+              $(`#status-agenda-${data.agenda.numero}`).html(
+                `<span style="color: #${color}">[${status}] Agenda ${data.agenda.nome}</span>`
+              );
+
+              if (error) {
+                throw console.log(error);
+              }
+
+              if (data) {
+                const parsedData = parseData(data.descrizioneStruttura);
+
+                const item = {
+                  eta: parsedData.eta,
+                  sede: parsedData.cat[0],
+                  tipo: parsedData.cat[1],
+                  agenda: data.agenda,
+                  dataErogazione: data.dataErogazione,
+                  nomeCompleto: data.descrizioneStruttura,
+                  primoAppuntamento: data.primoAppuntamento,
+                };
+
+                if ($(`#${item.eta}`).length === 0) {
+                  const background =
+                    item.eta === 7
+                      ? "#4b371e; background-color: #f0dcc7"
+                      : "#7AACC5";
+
+                  const outerHtml = `<div style='margin-top: 2em; padding: 1em; border: 1px solid ${background};' class="agenda-titolo"><div id='${
+                    item.eta
+                  }'><div><span><b>${
+                    CODICI_ETA[item.eta]
+                  }</b></span></div></div>`;
+
+                  $(outerHtml).appendTo("#agende-covid");
+                }
+
+                if ($(`#${item.eta}-${item.tipo}`).length === 0) {
+                  const typeHtml = `<div id='${item.eta}-${
+                    item.tipo
+                  }' style='margin-top: 1em;'><p><u>${
+                    TIPI[item.tipo]
+                  }</u></p></div>`;
+                  $(typeHtml).appendTo(`#${item.eta}`);
+                }
+
+                if ($(`#agenda-item-${item.agenda.numero}`).length === 0) {
+                  const parsedDataErogazione = new Intl.DateTimeFormat(
+                    "it"
+                  ).format(new Date(item.dataErogazione));
+
+                  const agendaHtml = `<p id="agenda-item-${item.agenda.numero}" onclick="$('select[name=strutturaRicercaAppuntamento]').val(${item.agenda.numero}); document.getElementsByName('strutturaRicercaAppuntamento')[0].scrollIntoView({ behavior: 'smooth', block: 'center' });"><span>• </span><span title="${item.nomeCompleto}" style='color: blue; text-decoration: underline; cursor: pointer'>${item.sede}: ${parsedDataErogazione} (${item.primoAppuntamento})</span></p>`;
+
+                  $(agendaHtml).appendTo(`#${item.eta}-${item.tipo}`);
+                }
+
+                sortList(`#${item.eta}-${item.tipo}`, "p");
+                sortList("#agende-covid", ".agenda-titolo");
+              }
+            });
+          }, index * BATCH_TIME);
         });
       }
 
-      function cleanAgende() {
-        codiciEta.forEach((key) => {
-          if ($(`#${key.eta}-drive`).children().length === 1) {
-            $(`#${key.eta}-drive`).remove();
-          }
-          if ($(`#${key.eta}-tamponi`).children().length === 1) {
-            $(`#${key.eta}-tamponi`).remove();
-          }
-          if ($(`#${key.eta}-dsp`).children().length === 1) {
-            $(`#${key.eta}-dsp`).remove();
-          }
-          if ($(`#${key.eta}-blu`).children().length === 1) {
-            $(`#${key.eta}-blu`).remove();
-          }
-          if ($(`#${key.eta}`).children().length === 1) {
-            $(`#${key.eta}`).parent().remove();
-          }
-        });
+      function addWarning() {
+        const html =
+          "<div id='warningLoading' style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'><div style='padding: 1em; border: 1px solid #7AACC5;'><div><div><b>PRENOTAZIONE SEMPLIFICATA</b></div><br><div><p>L'applicazione ha caricato le agende.</p><div><p id='warningText1'></p><div id='status.dettagli'><p onClick='$(\"#warningText2\").slideToggle(\"slow\");' style='cursor: pointer;'>► <u>Visualizza dettagli</u></p><p id='warningText2' style='display: none;'></p></div></div></div></div></div></div>";
+
+        $(html).insertAfter(
+          `#${$(".schede-covid")
+            .eq($(".schede-covid").length - 1)
+            .attr("id")}`
+        );
       }
 
       function startExtension() {
         $("#startExtension").attr("disabled", true);
 
-        if (isParsed) {
+        if (IS_PARSED) {
           alert(
             "Richiesta in corso o già completata, attendi o ricarica la pagina."
           );
         } else {
-          isParsed = true;
+          IS_PARSED = true;
           addWarning();
           startParsing();
         }
       }
 
-      $(document).ajaxStop(() => {
-        $("#warningText3").text(
-          "Tutte le agende sono state valutate. Mostro i risultati."
-        );
-        removeWarning();
-        addElements();
-        Object.keys(results).forEach((key) => {
-          let result = results[key];
-          result = result.sort((a, b) =>
-            a.sede > b.sede ? 1 : b.sede > a.sede ? -1 : 0
-          );
-          result.forEach((entry) => {
-            const parsedDataErogazione = new Intl.DateTimeFormat("it").format(
-              new Date(entry.dataErogazione)
-            );
-            $(
-              `<p onclick="$('select[name=strutturaRicercaAppuntamento]').val(${entry.agenda}); document.getElementsByName('strutturaRicercaAppuntamento')[0].scrollIntoView({ behavior: 'smooth', block: 'center' });"><span title="${entry.nomeCompleto}" style='color: blue; text-decoration: underline; cursor: pointer'> • ${entry.sede}: ${parsedDataErogazione}</span></p>`
-            ).appendTo(`#${entry.eta}-${entry.tipo.toLowerCase()}`);
-          });
-        });
+      const prenotazioneSemplificataButton = $(
+        '<input class="button" type="button" id="startExtension" value="Prenotazione semplificata">'
+      );
 
-        cleanAgende();
+      prenotazioneSemplificataButton.click(function () {
+        startExtension();
       });
 
-      $(
-        '<input class="button" type="button" id="startExtension" value="Prenotazione semplificata">'
-      )
-        .click(() => {
-          startExtension();
-        })
-        .insertAfter($("[name=selezionaAppuntamentoButton]"));
+      prenotazioneSemplificataButton.insertAfter(
+        $("[name=selezionaAppuntamentoButton]")
+      );
 
-      $("select[name=strutturaRicercaAppuntamento] option").each((a, b) => {
-        agende.push({
-          num: $(b).val(),
-          text: $(b).text(),
+      $("select[name=strutturaRicercaAppuntamento] option").each(function (
+        _,
+        item
+      ) {
+        AGENDE.push({
+          numero: $(item).val(),
+          nome: $(item).text(),
         });
       });
     }
@@ -468,7 +579,7 @@
         $('<iframe src="/servizi/index.php"></iframe>')
           .insertAfter("body")
           .hide()
-          .on("load", () => {
+          .on("load", function () {
             createDivMenu();
           });
       }
@@ -481,13 +592,16 @@
       window.location.href.match(
         /^https:\/\/www\.progetto-sole\.it\/riservata.*$/
       )
-    )
+    ) {
       agendaTamponiMenu();
+    }
+
     if (
       window.location.href.match(
         /^https:\/\/ws\.bolognaausl\.progetto-sole\.it\/soleweb\/\?wicket:interface.*$/
       )
-    )
+    ) {
       prenotazioneTamponi();
+    }
   })();
 })(window.jQuery.noConflict(true));
