@@ -20,6 +20,7 @@
 
       const AGENDE = [];
       const BATCH_TIME = 75;
+      const PARSE_RANGE_DAYS = 7;
       const CODICI_ETA = [
         "SCONOSCIUTO",
         "TUTTE LE ETA",
@@ -44,7 +45,7 @@
       function getDate() {
         const a = new Date();
         const b = new Date();
-        b.setDate(a.getDate() + 7);
+        b.setDate(a.getDate() + PARSE_RANGE_DAYS);
 
         return {
           start: Math.round(a.getTime()),
@@ -174,7 +175,7 @@
                       }
 
                       if (!slotHaTempoInRange) {
-                        return callback(null, { agenda });
+                        return callback("illegal_time", { agenda });
                       }
 
                       const descrizioneStruttura =
@@ -193,12 +194,12 @@
                         agenda,
                       });
                     } else {
-                      callback(null, { agenda });
+                      callback("no_slot_range", { agenda });
                     }
                   },
                 });
               } else {
-                callback("nomatch", { agenda });
+                callback("no_match", { agenda });
               }
             },
           });
@@ -427,7 +428,7 @@
               );
 
               if (error) {
-                throw console.log(error);
+                return console.log(error, agenda);
               }
 
               if (data) {
