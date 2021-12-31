@@ -219,6 +219,7 @@
         let eta = 0;
 
         if (cleanName.indexOf("covid visita") > -1) {
+          // Ambulatori blu
           if (cleanName.indexOf("orsola") > -1) {
             cat = ["Policlinico S. Orsola", "Blu"];
           }
@@ -237,6 +238,7 @@
 
           eta = 6;
         } else if (cleanName.indexOf("covid monoclonali") > -1) {
+          // Ambulatori monoclonali
           if (cleanName.indexOf("aosp") > -1) {
             cat = ["Policlinico S. Orsola", "Blu"];
           }
@@ -255,6 +257,7 @@
 
           eta = 7;
         } else {
+          // Tamponi Drive
           if (cleanName.indexOf("drive fiera") > -1) {
             cat = ["Drive Fiera Bologna", "Drive"];
           }
@@ -297,6 +300,15 @@
             cat = ["Drive Parco Nord", "Drive"];
           }
 
+          if (
+            cleanName.indexOf(
+              "drive casa della salute ingresso da via emilia 32"
+            ) > -1
+          ) {
+            cat = ["Drive San Lazzaro", "Drive"];
+          }
+
+          // Ambulatori Tamponi
           if (cleanName.indexOf("budrio") > -1) {
             cat = ["Budrio", "Tamponi"];
           }
@@ -353,6 +365,7 @@
             cat = ["Baricella", "Tamponi"];
           }
 
+          // Specifiche per classi
           if (
             cleanName.indexOf("tutte") > -1 ||
             cleanName.indexOf("aou") > -1
@@ -420,11 +433,21 @@
 
           setTimeout(function () {
             getAppuntamenti(agenda, function (error, data) {
-              const color = error ? "993123" : data ? "379923" : "997a23";
-              const status = error ? "errore" : data ? "ok" : "vuota";
+              let color = "#379923";
+              let status = "ok";
+
+              if (error) {
+                if (error === "no_slot_range") {
+                  color = "#997a23";
+                  status = "vuota";
+                } else {
+                  color = "#993123";
+                  status = "errore";
+                }
+              }
 
               $(`#status-agenda-${data.agenda.numero}`).html(
-                `<span style="color: #${color}">[${status}] Agenda ${data.agenda.nome}</span>`
+                `<span style="color: ${color}">[${status}] Agenda ${data.agenda.nome}</span>`
               );
 
               if (error) {
