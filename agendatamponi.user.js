@@ -20,7 +20,7 @@
 
       const AGENDE = [];
       const BATCH_TIME = 75;
-      const PARSE_RANGE_DAYS = 7;
+      const PARSE_RANGE_DAYS = 14;
       const CODICI_ETA = [
         "SCONOSCIUTO",
         "TUTTE LE ETA",
