@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Agenda Tamponi
 // @namespace    https://andreacassani.com/apps/agenda-tamponi
-// @version      0.5.5
+// @version      0.5.6
 // @description  Miglioramenti per prenotazione di tamponi su progetto SOLE
 // @author       Andrea Cassani
 // @icon         https://i.ibb.co/88kwYf3/icon128.png
@@ -19,7 +19,8 @@
       let IS_PARSED = false;
 
       const AGENDE = [];
-      const BATCH_TIME = 75;
+      const REQ_RETRY = 3;
+      const BATCH_TIME = 125;
       const PARSE_RANGE_DAYS = 14;
       const CODICI_ETA = [
         "SCONOSCIUTO",
@@ -108,22 +109,18 @@
             data: formData,
             timeout: 30000,
             error: function (_, status) {
-              if (status === "timeout") {
-                if (retry > 2) {
-                  callback("timeout", { agenda });
-                } else {
-                  getAppuntamenti(agenda, callback, ++retry);
-                }
-              } else {
+              if (retry > REQ_RETRY) {
                 callback(status, { agenda });
+              } else {
+                getAppuntamenti(agenda, callback, ++retry);
               }
             },
             success: function (html) {
               if (html.match(/login\/wicket:interface/)) {
-                if (retry > 2) {
-                  callback("login_error", { agenda });
+                if (retry > REQ_RETRY) {
+                  return callback("login_error", { agenda });
                 } else {
-                  getAppuntamenti(agenda, callback, ++retry);
+                  return getAppuntamenti(agenda, callback, ++retry);
                 }
               }
 
@@ -144,14 +141,10 @@
                   dataType: "json",
                   timeout: 30000,
                   error: function (_, status) {
-                    if (status === "timeout") {
-                      if (retry > 2) {
-                        callback("timeout", { agenda });
-                      } else {
-                        getAppuntamenti(agenda, callback, ++retry);
-                      }
-                    } else {
+                    if (retry > REQ_RETRY) {
                       callback(status, { agenda });
+                    } else {
+                      getAppuntamenti(agenda, callback, ++retry);
                     }
                   },
                   success: function (json) {
@@ -510,8 +503,7 @@
       }
 
       function addWarning() {
-        const html =
-          "<div id='warningLoading' style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'><div style='padding: 1em; border: 1px solid #7AACC5;'><div><div><b>PRENOTAZIONE SEMPLIFICATA</b></div><br><div><p>L'applicazione ha caricato le agende.</p><div><p id='warningText1'></p><div id='status.dettagli'><p onClick='$(\"#warningText2\").slideToggle(\"slow\");' style='cursor: pointer;'>► <u>Visualizza dettagli</u></p><p id='warningText2' style='display: none;'></p></div></div></div></div></div></div>";
+        const html = `<div id='warningLoading' style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'><div style='padding: 1em; border: 1px solid #7AACC5;'><div><div><b>PRENOTAZIONE SEMPLIFICATA</b></div><br><div><p>L'applicazione ha caricato le agende con slot entro i prossimi ${PARSE_RANGE_DAYS} giorni.</p><div><p id='warningText1'></p><div id='status.dettagli'><p onClick='$(\"#warningText2\").slideToggle(\"slow\");' style='cursor: pointer;'>► <u>Visualizza dettagli</u></p><p id='warningText2' style='display: none;'></p></div></div></div></div></div></div>`;
 
         $(html).insertAfter(
           `#${$(".schede-covid")
