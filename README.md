@@ -30,7 +30,7 @@ Ricordo che l'utilizzo di Agenda-Tamponi e delle relative estensioni di gestione
 ## Contribuire
 
 Per conribuire a questo progetto puoi aprire una nuova [Issue](https://github.com/andreacassani/Agenda-Tamponi/issues) oppure una [Pull request](https://github.com/andreacassani/Agenda-Tamponi/pulls).\
-Se invece vuoi effettuare una donazione per supportare il mio lavoro, puoi farlo [cliccando qui](https://www.paypal.com/donate?hosted_button_id=3FYDZZEECA27C&source=url).
+Se invece vuoi effettuare una donazione per supportare il mio lavoro, puoi farlo [su PayPal](https://www.paypal.com/donate?hosted_button_id=3FYDZZEECA27C&source=url).
 
 ## Changelog
 
