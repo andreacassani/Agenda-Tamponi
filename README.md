@@ -8,6 +8,7 @@ Agenda-Tamponi è predisposta per ricevere gli aggiornamenti in maniera automati
 [![Supporta il mio lavoro :)](https://img.shields.io/static/v1?label=PayPal&message=Supporta%20il%20mio%20lavoro&color=blue&style=for-the-badge&logo=paypal&labelColor=white&link=https://www.paypal.com/donate?hosted_button_id=3FYDZZEECA27C&source=url)](https://www.paypal.com/donate?hosted_button_id=3FYDZZEECA27C&source=url)\
 \
 Indice:
+
 - [Documentazione](#documentazione)
 - [Licenza](#licenza)
 - [Responsabilità](#responsabilità)
@@ -28,7 +29,8 @@ Ricordo che l'utilizzo di Agenda-Tamponi e delle relative estensioni di gestione
 
 ## Contribuire
 
-Per conribuire a questo progetto puoi aprire una nuova [Issue](https://github.com/andreacassani/Agenda-Tamponi/issues) oppure una [Pull request](https://github.com/andreacassani/Agenda-Tamponi/pulls).
+Per conribuire a questo progetto puoi aprire una nuova [Issue](https://github.com/andreacassani/Agenda-Tamponi/issues) oppure una [Pull request](https://github.com/andreacassani/Agenda-Tamponi/pulls).\
+Se invece vuoi effettuare una donazione per supportare il mio lavoro, puoi farlo [cliccando qui](https://www.paypal.com/donate?hosted_button_id=3FYDZZEECA27C&source=url).
 
 ## Changelog
 
