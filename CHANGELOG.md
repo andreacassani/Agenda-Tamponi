@@ -5,7 +5,7 @@ Tutti le novità importanti al progetto sono elencate in questo file. I cambiame
 ## [0.5.7] - 08-01-2022
 ### Added
 - Aggiunto CHANGELOG.md.
-- Aggiunto un link a GitHub dalla pagina di prenotazione.
+- Aggiunto un link al sito web dalla pagina di prenotazione.
 
 ### Fixed
 - Corretta l'implementazione di Element.scrollIntoView() che non funzionava sui browser più vecchi.
