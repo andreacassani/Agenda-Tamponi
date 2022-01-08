@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Agenda Tamponi
 // @namespace    https://andreacassani.com/apps/agenda-tamponi
-// @version      0.5.6
+// @version      0.5.7
 // @description  Miglioramenti per prenotazione di tamponi su progetto SOLE
 // @author       Andrea Cassani
 // @icon         https://i.ibb.co/88kwYf3/icon128.png
@@ -409,7 +409,7 @@
 
       function startParsing() {
         $("#warningText1").html(
-          `Ho trovato ${AGENDE.length} agende. Clicca su <i>Dettagli</i> per vedere il progresso.<br>Mano a mano che le agende vengono caricate saranno mostrate in calce alla pagina.`
+          `Ho trovato ${AGENDE.length} agende. Clicca su <i>Visualizza dettagli</i> per vedere il progresso.<br>Mano a mano che le agende vengono caricate saranno mostrate in calce alla pagina.`
         );
 
         const warningHtml =
@@ -489,7 +489,7 @@
                     "it"
                   ).format(new Date(item.dataErogazione));
 
-                  const agendaHtml = `<p id="agenda-item-${item.agenda.numero}" onclick="$('select[name=strutturaRicercaAppuntamento]').val(${item.agenda.numero}); document.getElementsByName('strutturaRicercaAppuntamento')[0].scrollIntoView({ behavior: 'smooth', block: 'center' });"><span>• </span><span title="${item.nomeCompleto}" style='color: blue; text-decoration: underline; cursor: pointer'>${item.sede}: ${parsedDataErogazione} (${item.primoAppuntamento})</span></p>`;
+                  const agendaHtml = `<p id="agenda-item-${item.agenda.numero}" onclick="const scrollTarget = document.getElementsByName('strutturaRicercaAppuntamento')[0]; $('select[name=strutturaRicercaAppuntamento]').val(${item.agenda.numero}); try {scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });} catch (error) {scrollTarget.scrollIntoView(true); window.scrollBy(0, -100);}"><span>• </span><span title="${item.nomeCompleto}" style='color: blue; text-decoration: underline; cursor: pointer'>${item.sede}: ${parsedDataErogazione} (${item.primoAppuntamento})</span></p>`;
 
                   $(agendaHtml).appendTo(`#${item.eta}-${item.tipo}`);
                 }
@@ -503,7 +503,7 @@
       }
 
       function addWarning() {
-        const html = `<div id='warningLoading' style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'><div style='padding: 1em; border: 1px solid #7AACC5;'><div><div><b>PRENOTAZIONE SEMPLIFICATA</b></div><br><div><p>L'applicazione ha caricato le agende con slot entro i prossimi ${PARSE_RANGE_DAYS} giorni.</p><div><p id='warningText1'></p><div id='status.dettagli'><p onClick='$(\"#warningText2\").slideToggle(\"slow\");' style='cursor: pointer;'>► <u>Visualizza dettagli</u></p><p id='warningText2' style='display: none;'></p></div></div></div></div></div></div>`;
+        const html = `<div id='warningLoading' style='background: none repeat scroll 0 0 #DFEBF1; padding: 1em; color: #1e364b; margin: 0.2em;'><div style='padding: 1em; border: 1px solid #7AACC5;'><div><div><b>PRENOTAZIONE SEMPLIFICATA</b><br>Per informazioni, aggiornamenti, e se vuoi supportare lo sviluppo di questa funzione visita <a href="https://www.andreacassani.com/apps/agenda-tamponi" target="_blank">www.andreacassani.com/apps/agenda-tamponi</a>.</div><br><div><p>L'applicazione ha caricato le agende con slot entro i prossimi ${PARSE_RANGE_DAYS} giorni.</p><div><p id='warningText1'></p><div id='status.dettagli'><p onClick='$(\"#warningText2\").slideToggle(\"slow\", function() {$(\"#freccia-dettagli\").toggleClass(\"closed\"); if ($(\"#freccia-dettagli\").hasClass(\"closed\")) {$(\"#freccia-dettagli\").text(\"▶\")} else {$(\"#freccia-dettagli\").text(\"▼\")}});' style='cursor: pointer;'><span id="freccia-dettagli" class="closed">▶</span> <u>Visualizza dettagli</u></p><p id='warningText2' style='display: none; padding: 1em; margin-top: 1em; border: 1px solid #1e364b; background-color: #f0dcc7;'></p></div></div></div></div></div></div>`;
 
         $(html).insertAfter(
           `#${$(".schede-covid")
