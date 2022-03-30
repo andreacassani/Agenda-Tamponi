@@ -486,7 +486,7 @@
                       ? "#4b371e; background-color: #f0dcc7"
                       : "#7AACC5";
 
-                  const outerHtml = `<div style='margin-top: 2em; padding: 1em; border: 1px solid ${background};' class="agenda-titolo"><div id='${
+                  const outerHtml = `<div style='margin-top: 1em; margin-bottom: 1em; padding: 1em; border: 1px solid ${background};' class="agenda-titolo"><div id='${
                     item.eta
                   }'><div><span><b>${
                     CODICI_ETA[item.eta]
