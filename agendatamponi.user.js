@@ -29,8 +29,9 @@
         "MAGGIORE 14 ANNI",
         "SCUOLE",
         "PEDIATRICI",
-        "40-69 ANNI (AMB. BLU)",
+        "AMBULATORIO BLU",
         "MONOCLONALI",
+        "MAGGIORE 4 ANNI",
       ];
       const TIPI = {
         Sconosciuto: "Sconosciuto",
@@ -301,6 +302,10 @@
             cat = ["Drive San Lazzaro", "Drive"];
           }
 
+          if (cleanName.indexOf("drive istituto ortopedico rizzoli") > -1) {
+            cat = ["Istituto Ortopedico Rizzoli", "Drive"];
+          }
+
           // Ambulatori Tamponi
           if (cleanName.indexOf("budrio") > -1) {
             cat = ["Budrio", "Tamponi"];
@@ -334,10 +339,6 @@
             cat = ["Policlinico S. Orsola", "Tamponi"];
           }
 
-          if (cleanName.indexOf("rizzoli") > -1) {
-            cat = ["Istituto Ortopedico Rizzoli", "Tamponi"];
-          }
-
           if (cleanName.indexOf("boldrini") > -1) {
             cat = ["Boldrini", "Tamponi"];
           }
@@ -356,6 +357,14 @@
 
           if (cleanName.indexOf("baricella tamponi") > -1) {
             cat = ["Baricella", "Tamponi"];
+          }
+
+          if (cleanName.indexOf("bazzano tamponi diagnostici") > -1) {
+            cat = ["Bazzano", "Tamponi"];
+          }
+
+          if (cleanName.indexOf("casalecchio tamponi diagnostici") > -1) {
+            cat = ["Casalecchio", "Tamponi"];
           }
 
           // Specifiche per classi
@@ -394,6 +403,10 @@
             cleanName.indexOf("personale istituti scolastici") > -1
           ) {
             eta = 4;
+          }
+
+          if (cleanName.indexOf("maggiore di 4 anni") > -1) {
+            eta = 8;
           }
         }
 
