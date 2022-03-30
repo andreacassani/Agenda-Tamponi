@@ -304,7 +304,7 @@
           }
 
           if (cleanName.indexOf("drive istituto ortopedico rizzoli") > -1) {
-            cat = ["Istituto Ortopedico Rizzoli", "Drive"];
+            cat = ["Drive Istituto Ortopedico Rizzoli", "Drive"];
           }
 
           // Ambulatori Tamponi
@@ -360,12 +360,16 @@
             cat = ["Baricella", "Tamponi"];
           }
 
-          if (cleanName.indexOf("bazzano tamponi diagnostici") > -1) {
+          if (cleanName.indexOf("bazzano tamponi") > -1) {
             cat = ["Bazzano", "Tamponi"];
           }
 
-          if (cleanName.indexOf("casalecchio tamponi diagnostici") > -1) {
+          if (cleanName.indexOf("casalecchio tamponi") > -1) {
             cat = ["Casalecchio", "Tamponi"];
+          }
+
+          if (cleanName.indexOf("san giovanni in persiceto tamponi") > -1) {
+            cat = ["San Giovanni in Persiceto", "Tamponi"];
           }
 
           // Specifiche per classi
