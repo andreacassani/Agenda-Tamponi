@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Agenda Tamponi
 // @namespace    https://andreacassani.com/apps/agenda-tamponi
-// @version      0.5.9
+// @version      0.5.10
 // @description  Miglioramenti per prenotazione di tamponi su progetto SOLE
 // @author       Andrea Cassani
 // @icon         https://i.ibb.co/88kwYf3/icon128.png
@@ -342,6 +342,10 @@
 
           if (cleanName.indexOf("boldrini") > -1) {
             cat = ["Boldrini", "Tamponi"];
+          }
+
+          if (cleanName.indexOf("autostazione piazza xx settembre") > -1) {
+            cat = ["Autostazione", "Tamponi"];
           }
 
           if (cleanName.indexOf("pieve di cento") > -1) {
