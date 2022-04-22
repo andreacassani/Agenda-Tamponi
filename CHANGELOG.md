@@ -2,13 +2,18 @@
 
 Tutti le novità importanti al progetto sono elencate in questo file. I cambiamenti sono elencati in ordine di priorità (changed, added, fixed).
 
-## [0.5.9] - 08-01-2022
+## [0.5.10] - 23-04-2022
+
+### Added
+
+- Aggiornati nomi agende.
+## [0.5.9] - 30-03-2022
 
 ### Fixed
 
 - Corretti nomi agende.
 
-## [0.5.8] - 08-01-2022
+## [0.5.8] - 30-03-2022
 
 ### Added
 
@@ -81,7 +86,8 @@ Tutti le novità importanti al progetto sono elencate in questo file. I cambiame
 
 - Aggiornati i nomi delle agende.
 
-[0.5.8]: https://github.com/andreacassani/Agenda-Tamponi/compare/v0.5.8...v0.5.9
+[0.5.10]: https://github.com/andreacassani/Agenda-Tamponi/compare/v0.5.9...v0.5.10
+[0.5.9]: https://github.com/andreacassani/Agenda-Tamponi/compare/v0.5.8...v0.5.9
 [0.5.8]: https://github.com/andreacassani/Agenda-Tamponi/compare/v0.5.7...v0.5.8
 [0.5.7]: https://github.com/andreacassani/Agenda-Tamponi/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/andreacassani/Agenda-Tamponi/compare/v0.5.5...v0.5.6
